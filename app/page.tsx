@@ -58,7 +58,6 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchVoices = async () => {
       try {
-        console.log('Fetching voices...');
         const effectiveApiKey = getEffectiveApiKey();
 
         const headers: HeadersInit = {
@@ -68,9 +67,6 @@ export default function Dashboard() {
         // Add API key to headers if available
         if (effectiveApiKey) {
           headers['x-api-key'] = effectiveApiKey;
-          console.log('Using custom API key for voices request');
-        } else {
-          console.log('Using default API key for voices request');
         }
 
         const response = await fetch('/api/voices', {
@@ -80,25 +76,21 @@ export default function Dashboard() {
 
         if (response.ok) {
           const voicesData = await response.json();
-          console.log('Voices API response:', voicesData);
-
           const voicesList = voicesData.voices || [];
-          console.log('Raw voices list length:', voicesList.length);
 
           // Filter out voices without valid voice_id
           const validVoices = voicesList.filter(voice =>
             voice && voice.voice_id && typeof voice.voice_id === 'string' && voice.voice_id.trim() !== ''
           );
 
-          console.log('Valid voices length:', validVoices.length);
-          if (validVoices.length > 0) {
-            console.log('Sample voice:', validVoices[0]);
-          }
           setVoices(validVoices);
         } else {
-          console.error('Voices API response not OK:', response.status);
-          const errorData = await response.json().catch(() => ({}));
-          console.error('Error details:', errorData);
+          // Handle 401 gracefully - this is expected when no API key is configured
+          if (response.status === 401) {
+            console.log('API key required - please configure your ElevenLabs API key');
+          } else {
+            console.warn('Voices API temporarily unavailable:', response.status);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch voices:', error);
