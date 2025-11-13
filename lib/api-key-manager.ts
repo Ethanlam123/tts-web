@@ -13,6 +13,10 @@ export const apiKeyManager: ApiKeyManager = {
         throw new Error('Invalid API key format');
       }
 
+      if (typeof window === 'undefined') {
+        throw new Error('Cannot store API key during SSR');
+      }
+
       // Only store valid keys
       localStorage.setItem(API_KEY_STORAGE_KEY, apiKey);
 
@@ -29,6 +33,9 @@ export const apiKeyManager: ApiKeyManager = {
    */
   getStoredApiKey: (): string | null => {
     try {
+      if (typeof window === 'undefined') {
+        return null; // SSR-safe: no localStorage on server
+      }
       return localStorage.getItem(API_KEY_STORAGE_KEY);
     } catch (error) {
       console.error('Failed to retrieve API key:', error);
@@ -41,6 +48,9 @@ export const apiKeyManager: ApiKeyManager = {
    */
   clearStoredApiKey: (): void => {
     try {
+      if (typeof window === 'undefined') {
+        return; // SSR-safe: no localStorage on server
+      }
       localStorage.removeItem(API_KEY_STORAGE_KEY);
       localStorage.setItem(API_KEY_STATUS_KEY, 'default');
     } catch (error) {
@@ -134,13 +144,18 @@ export const apiKeyManager: ApiKeyManager = {
 export function getApiKeyStatus(): ApiKeyStatus {
   try {
     const storedKey = apiKeyManager.getStoredApiKey();
-    const status = localStorage.getItem(API_KEY_STATUS_KEY) as ApiKeyStatus;
+
+    // Check if localStorage is available (SSR-safe)
+    let status: ApiKeyStatus = 'default';
+    if (typeof window !== 'undefined') {
+      status = localStorage.getItem(API_KEY_STATUS_KEY) as ApiKeyStatus || 'default';
+    }
 
     if (storedKey && apiKeyManager.validateApiKeyFormat(storedKey)) {
       return 'custom';
     }
 
-    return status || 'default';
+    return status;
   } catch (error) {
     console.error('Failed to get API key status:', error);
     return 'none';
@@ -177,7 +192,9 @@ export function isUsingCustomApiKey(): boolean {
  */
 export function setApiKeyStatus(status: ApiKeyStatus): void {
   try {
-    localStorage.setItem(API_KEY_STATUS_KEY, status);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(API_KEY_STATUS_KEY, status);
+    }
   } catch (error) {
     console.error('Failed to set API key status:', error);
   }
@@ -188,6 +205,10 @@ export function setApiKeyStatus(status: ApiKeyStatus): void {
  */
 export function initializeApiKeyStatus(): void {
   try {
+    if (typeof window === 'undefined') {
+      return; // Skip initialization during SSR
+    }
+
     const currentStatus = localStorage.getItem(API_KEY_STATUS_KEY);
 
     if (!currentStatus) {
