@@ -50,7 +50,7 @@ Thank you for your interest in contributing to AudioConverter! This guide will h
 - **TypeScript**: Use strict mode throughout
 - **Components**: Use shadcn/ui components when possible
 - **Styling**: Follow Tailwind CSS v4 patterns
-- **Dark Theme**: Ensure all components work with dark theme
+- **Light Theme**: Ensure all components work with light theme
 - **Icons**: Use lucide-react for consistency
 
 #### API Key Development
@@ -113,7 +113,7 @@ docs: documentation updates
 - [ ] Clear all removes all lines
 - [ ] Error handling is user-friendly
 - [ ] Responsive design (mobile/tablet/desktop)
-- [ ] Dark/light mode compatibility
+- [ ] Light theme compatibility
 
 ### API Key Testing
 - [ ] Server-side API key fallback
@@ -146,7 +146,7 @@ tts-web/
 ### Medium Priority
 - **Accessibility**: Enhance screen reader support
 - **Internationalization**: Add language support
-- **Themes**: Add light theme option
+- **Themes**: Add dark theme option
 - **Analytics**: Add usage tracking
 
 ### Low Priority

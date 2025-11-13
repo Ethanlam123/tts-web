@@ -19,7 +19,7 @@ A modern, feature-rich text-to-speech application built with Next.js 16 and Elev
 - **Automatic Refresh**: Voices update immediately when API key is configured
 
 ### 🎨 User Interface
-- **Modern Dark Theme**: Clean, professional interface with dark mode
+- **Modern Light Theme**: Clean, professional interface with light mode
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
 - **Real-time Feedback**: Status indicators for each line generation
 - **Drag & Drop**: Intuitive file upload with drag-and-drop support
@@ -242,7 +242,7 @@ Response: Audio buffer (MP3)
 ### Development Guidelines
 - Follow TypeScript strict mode practices
 - Use shadcn/ui components for consistency
-- Maintain dark theme compatibility
+- Maintain light theme compatibility
 - Test API key configuration flows
 - Ensure responsive design on all devices
 

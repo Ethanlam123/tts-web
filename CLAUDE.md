@@ -31,7 +31,7 @@ AudioConverter is a Next.js-based text-to-speech web application that converts t
 - Adjustable playback speed (0.5x - 2.0x)
 - Batch operations (Generate All, Download All as ZIP)
 - Real-time character counting
-- Dark theme UI matching screen.png design mockup
+- Light theme UI matching screen.png design mockup
 
 ## Technology Stack
 
@@ -288,7 +288,7 @@ tts-web/
 │   │   └── tts/route.ts           # POST - Generate audio
 │   ├── layout.tsx                 # Root layout with fonts
 │   ├── page.tsx                   # Main dashboard (client component)
-│   └── globals.css                # Tailwind + custom dark theme
+│   └── globals.css                # Tailwind + custom light theme
 ├── components/
 │   ├── ui/                        # shadcn/ui components
 │   │   ├── button.tsx
