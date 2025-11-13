@@ -31,19 +31,34 @@ export async function POST(request: NextRequest) {
       outputFormat: 'mp3_44100_128',
     });
 
-    // Convert stream to buffer
+    // Convert stream to buffer with better error handling
     const chunks = [];
-    for await (const chunk of audio) {
-      chunks.push(chunk);
-    }
-    const buffer = Buffer.concat(chunks);
+    let totalSize = 0;
 
-    return new Response(buffer, {
-      headers: {
-        'Content-Type': 'audio/mpeg',
-        'Cache-Control': 'no-cache',
-      },
-    });
+    try {
+      for await (const chunk of audio) {
+        chunks.push(chunk);
+        totalSize += chunk.length;
+      }
+
+      if (chunks.length === 0) {
+        throw new Error('No audio data received from ElevenLabs');
+      }
+
+      const buffer = Buffer.concat(chunks);
+
+      return new Response(buffer, {
+        status: 200,
+        headers: {
+          'Content-Type': 'audio/mpeg',
+          'Content-Length': buffer.length.toString(),
+          'Cache-Control': 'no-cache',
+        },
+      });
+    } catch (streamError) {
+      console.error('Error processing audio stream:', streamError);
+      throw new Error('Failed to process audio stream from ElevenLabs');
+    }
   } catch (error) {
     console.error('Failed to generate audio:', error);
 

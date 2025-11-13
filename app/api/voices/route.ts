@@ -9,7 +9,17 @@ export async function GET() {
 
     const voices = await elevenlabs.voices.getAll();
 
-    return NextResponse.json(voices);
+    // Map voiceId to voice_id for frontend consistency
+    const mappedVoices = {
+      voices: voices.voices?.map((voice: any) => ({
+        voice_id: voice.voiceId,
+        name: voice.name,
+        labels: voice.labels,
+        description: voice.description,
+      })) || []
+    };
+
+    return NextResponse.json(mappedVoices);
   } catch (error) {
     console.error('Failed to fetch voices:', error);
 

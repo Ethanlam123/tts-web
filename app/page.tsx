@@ -21,13 +21,23 @@ export default function Dashboard() {
   useEffect(() => {
     const savedVoiceId = localStorage.getItem('voiceId');
     const savedSpeed = localStorage.getItem('speed');
-    if (savedVoiceId) setSelectedVoiceId(savedVoiceId);
+
+    // Clear invalid cached voice ID
+    if (savedVoiceId && (savedVoiceId.includes('(') || savedVoiceId.length > 50)) {
+      localStorage.removeItem('voiceId');
+    } else if (savedVoiceId) {
+      setSelectedVoiceId(savedVoiceId);
+    }
+
     if (savedSpeed) setSpeed(parseFloat(savedSpeed));
   }, []);
 
   // Save preferences to localStorage
   useEffect(() => {
-    if (selectedVoiceId) localStorage.setItem('voiceId', selectedVoiceId);
+    // Only save valid voice IDs
+    if (selectedVoiceId && !selectedVoiceId.includes('(') && selectedVoiceId.length <= 50) {
+      localStorage.setItem('voiceId', selectedVoiceId);
+    }
   }, [selectedVoiceId]);
 
   useEffect(() => {
@@ -38,10 +48,27 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchVoices = async () => {
       try {
+        console.log('Fetching voices...');
         const response = await fetch('/api/voices');
         if (response.ok) {
           const voicesData = await response.json();
-          setVoices(voicesData.voices || []);
+          console.log('Voices API response:', voicesData);
+
+          const voicesList = voicesData.voices || [];
+          console.log('Raw voices list length:', voicesList.length);
+
+          // Filter out voices without valid voice_id
+          const validVoices = voicesList.filter(voice =>
+            voice && voice.voice_id && typeof voice.voice_id === 'string' && voice.voice_id.trim() !== ''
+          );
+
+          console.log('Valid voices length:', validVoices.length);
+          if (validVoices.length > 0) {
+            console.log('Sample voice:', validVoices[0]);
+          }
+          setVoices(validVoices);
+        } else {
+          console.error('Voices API response not OK:', response.status);
         }
       } catch (error) {
         console.error('Failed to fetch voices:', error);
@@ -114,7 +141,17 @@ export default function Dashboard() {
   // Generate audio for a single line
   const generateAudio = async (lineId: string) => {
     const line = lines.find(l => l.id === lineId);
-    if (!line || !selectedVoiceId) return;
+    if (!line || !selectedVoiceId) {
+      console.error('No line or voice ID selected');
+      return;
+    }
+
+    // Validate voice_id format
+    if (selectedVoiceId.includes('(') || selectedVoiceId.includes('-') || selectedVoiceId.length > 50) {
+      console.error('Invalid voice ID format:', selectedVoiceId);
+      alert('Please select a valid voice from the dropdown');
+      return;
+    }
 
     // Update line status to processing
     setLines(prev => prev.map(l =>
@@ -139,11 +176,18 @@ export default function Dashboard() {
       }
 
       const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
+
+      if (audioBlob.size === 0) {
+        throw new Error('Received empty audio file');
+      }
+
+      // Ensure blob has correct MIME type
+      const audioBlobWithCorrectType = new Blob([audioBlob], { type: 'audio/mpeg' });
+      const audioUrl = URL.createObjectURL(audioBlobWithCorrectType);
 
       // Update line with audio data
       setLines(prev => prev.map(l =>
-        l.id === lineId ? { ...l, status: 'ready' as const, audioBlob, audioUrl } : l
+        l.id === lineId ? { ...l, status: 'ready' as const, audioBlob: audioBlobWithCorrectType, audioUrl } : l
       ));
     } catch (error) {
       console.error('Failed to generate audio:', error);

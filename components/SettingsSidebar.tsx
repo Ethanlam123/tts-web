@@ -57,8 +57,9 @@ export default function SettingsSidebar({
               onChange={(e) => onVoiceChange(e.target.value)}
               className="w-full bg-background border border-input rounded-md px-3 py-2 text-foreground"
             >
-              {voices.map((voice) => (
-                <option key={voice.voice_id} value={voice.voice_id}>
+              <option value="">Select a voice...</option>
+              {voices.map((voice, index) => (
+                <option key={`${voice.voice_id}-${index}`} value={voice.voice_id}>
                   {formatVoiceName(voice)}
                 </option>
               ))}
@@ -68,7 +69,7 @@ export default function SettingsSidebar({
               disabled
               className="w-full bg-muted border border-input rounded-md px-3 py-2 text-muted-foreground"
             >
-              <option>Loading voices...</option>
+              <option key="no-voices">No voices available - check API key</option>
             </select>
           )}
           <p className="text-xs text-muted-foreground">

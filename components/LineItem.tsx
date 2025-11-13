@@ -16,20 +16,51 @@ export default function LineItem({ line, index, onRegenerate, onDelete, onPlay }
   const [isPlaying, setIsPlaying] = useState(false);
 
   const handlePlay = async () => {
-    if (!line.audioUrl) return;
+    if (!line.audioBlob) {
+      console.error('No audio blob available for playback');
+      return;
+    }
 
     setIsPlaying(true);
+
     try {
-      const audio = new Audio(line.audioUrl);
-      audio.onended = () => setIsPlaying(false);
-      audio.onerror = () => {
+      // Create a fresh blob URL each time to avoid caching issues
+      const freshAudioUrl = URL.createObjectURL(line.audioBlob);
+
+      // Create new audio element
+      const audio = new Audio(freshAudioUrl);
+
+      // Set up event listeners
+      audio.addEventListener('ended', () => {
         setIsPlaying(false);
-        console.error('Audio playback failed');
-      };
+        URL.revokeObjectURL(freshAudioUrl); // Clean up
+      });
+
+      audio.addEventListener('error', (e) => {
+        setIsPlaying(false);
+        URL.revokeObjectURL(freshAudioUrl);
+        console.error('Audio playback failed:', audio.error);
+      });
+
+      // Play the audio
       await audio.play();
+
     } catch (error) {
       setIsPlaying(false);
       console.error('Failed to play audio:', error);
+
+      // Try direct HTML5 audio as fallback
+      try {
+        const audio = new Audio();
+        audio.src = URL.createObjectURL(line.audioBlob);
+        audio.play().then(() => {
+          console.log('Fallback audio playback started');
+        }).catch((fallbackError) => {
+          console.error('Fallback audio also failed:', fallbackError);
+        });
+      } catch (fallbackError) {
+        console.error('All audio playback attempts failed:', fallbackError);
+      }
     }
   };
 

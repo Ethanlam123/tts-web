@@ -1,7 +1,7 @@
 // Type definitions for TTS Web Application
 
 export interface Voice {
-  voice_id: string;
+  voice_id: string; // Map from voiceId in API response
   name: string;
   labels?: {
     accent?: string;
@@ -9,7 +9,9 @@ export interface Voice {
     age?: string;
     description?: string;
     use_case?: string;
+    language?: string;
   };
+  description?: string;
 }
 
 export interface Line {
