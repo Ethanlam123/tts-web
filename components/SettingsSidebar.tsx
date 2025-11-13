@@ -56,7 +56,7 @@ export default function SettingsSidebar({
       </h2>
 
       {/* API Key Section */}
-      <div className="space-y-4 mb-6 p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
+      <div className="space-y-4 mb-6 p-4 bg-slate-100 dark:bg-slate-800/30 rounded-lg border border-slate-200 dark:border-slate-700/50">
         <div className="flex items-center gap-2 mb-3">
           <Shield className="h-4 w-4" />
           <span className="text-sm font-medium">API Configuration</span>

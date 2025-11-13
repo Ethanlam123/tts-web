@@ -137,7 +137,7 @@ export function ApiKeyInput({
 
         <div className="space-y-4">
           {/* Current Status */}
-          <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
+          <div className="flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-800/50 rounded-lg">
             <div className="space-y-1">
               <div className="text-sm font-medium">Current Status</div>
               <div className="flex items-center gap-2">
@@ -244,9 +244,9 @@ export function ApiKeyInput({
               <TabsTrigger value="help">Help</TabsTrigger>
             </TabsList>
             <TabsContent value="format" className="space-y-2">
-              <div className="text-sm text-slate-400">
-                <p>Your API key should start with <code className="bg-slate-700 px-1 rounded">sk_</code> followed by alphanumeric characters.</p>
-                <p className="mt-1">Example: <code className="bg-slate-700 px-1 rounded">sk_xxxxxxxxxxxxxxxx</code></p>
+              <div className="text-sm text-slate-300 dark:text-slate-400">
+                <p>Your API key should start with <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded text-slate-800 dark:text-slate-200">sk_</code> followed by alphanumeric characters.</p>
+                <p className="mt-1">Example: <code className="bg-slate-200 dark:bg-slate-700 px-1 rounded text-slate-800 dark:text-slate-200">sk_xxxxxxxxxxxxxxxx</code></p>
               </div>
             </TabsContent>
             <TabsContent value="help" className="space-y-2">
