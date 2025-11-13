@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Voice } from '@/types';
-import { formatVoiceName } from '@/types';
+import { Voice } from "@/types";
+import { formatVoiceName } from "@/types";
 
 interface SettingsSidebarProps {
   voices: Voice[];
@@ -32,9 +32,9 @@ export default function SettingsSidebar({
 }: SettingsSidebarProps) {
   // Calculate character count status
   const getCharacterCountStatus = () => {
-    if (totalCharacters > 8000) return 'warning';
-    if (totalCharacters > 10000) return 'error';
-    return 'normal';
+    if (totalCharacters > 8000) return "warning";
+    if (totalCharacters > 10000) return "error";
+    return "normal";
   };
 
   const characterStatus = getCharacterCountStatus();
@@ -59,7 +59,10 @@ export default function SettingsSidebar({
             >
               <option value="">Select a voice...</option>
               {voices.map((voice, index) => (
-                <option key={`${voice.voice_id}-${index}`} value={voice.voice_id}>
+                <option
+                  key={`${voice.voice_id}-${index}`}
+                  value={voice.voice_id}
+                >
                   {formatVoiceName(voice)}
                 </option>
               ))}
@@ -69,11 +72,14 @@ export default function SettingsSidebar({
               disabled
               className="w-full bg-muted border border-input rounded-md px-3 py-2 text-muted-foreground"
             >
-              <option key="no-voices">No voices available - check API key</option>
+              <option key="no-voices">
+                No voices available - check API key
+              </option>
             </select>
           )}
           <p className="text-xs text-muted-foreground">
-            This voice will be used for all lines by default. You can override it for individual lines on the left.
+            This voice will be used for all lines by default. You can override
+            it for individual lines on the left.
           </p>
         </div>
 
@@ -128,14 +134,16 @@ export default function SettingsSidebar({
       <div className="mt-6">
         <div className="flex justify-between text-sm">
           <span className="text-foreground">Character Count</span>
-          <span className={
-            characterStatus === 'warning'
-              ? 'text-amber-500'
-              : characterStatus === 'error'
-              ? 'text-red-500'
-              : 'text-foreground'
-          }>
-            {totalCharacters.toLocaleString()} / 10,000
+          <span
+            className={
+              characterStatus === "warning"
+                ? "text-amber-500"
+                : characterStatus === "error"
+                ? "text-red-500"
+                : "text-foreground"
+            }
+          >
+            {totalCharacters.toLocaleString()}
           </span>
         </div>
       </div>
