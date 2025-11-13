@@ -101,6 +101,24 @@ The system SHALL display a settings panel on the right side with controls and in
 - **AND** use dark background matching the theme
 - **AND** maintain fixed width for consistent layout
 
+### Requirement: API Configuration Section
+The system SHALL display an API key configuration section for user key management.
+
+#### Scenario: Display API Configuration structure
+- **WHEN** settings panel renders
+- **THEN** the system SHALL display "API Configuration" section above other controls
+- **AND** position section with appropriate spacing from heading
+- **AND** use light background with dark mode support for visual contrast
+- **AND** include rounded borders for visual separation
+
+#### Scenario: Display API key status and controls
+- **WHEN** API Configuration section renders
+- **THEN** the system SHALL display current API key status indicator
+- **AND** show status text ("Using your API key", "Using default API key", or "No API key configured")
+- **AND** include brief descriptive text explaining current status
+- **AND** provide quick access button for configuration ("Configure" or "Update")
+- **AND** use responsive styling that works in both light and dark modes
+
 ### Requirement: Voice Selection Dropdown
 The system SHALL display a voice selection dropdown with clear labeling.
 

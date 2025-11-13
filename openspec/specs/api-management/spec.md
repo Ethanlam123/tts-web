@@ -22,6 +22,29 @@ The system SHALL allow users to input and store their own ElevenLabs API keys se
 - **AND** persist the key across page refreshes within the browser session
 - **AND** never transmit the key to server storage
 
+#### Scenario: API Key Dialog Visual Design
+- **WHEN** the API key input dialog opens
+- **THEN** the system SHALL display "API Key Configuration" as dialog title
+- **AND** include Shield icon alongside the title
+- **AND** show descriptive text about API key benefits
+- **AND** use modal dialog overlay with proper focus management
+
+#### Scenario: Display current API key status in dialog
+- **WHEN** the API key configuration dialog renders
+- **THEN** the system SHALL display a "Current Status" section
+- **AND** use light background with dark mode support for visual contrast
+- **AND** show current API key status with appropriate badge styling
+- **AND** display masked API key preview when using custom key
+- **AND** include brief explanatory text about current status
+
+#### Scenario: Display API key format help
+- **WHEN** user opens the format help tab in the dialog
+- **THEN** the system SHALL display format requirements for API keys
+- **AND** show "sk_" prefix example with code formatting
+- **AND** display example key with proper code highlighting
+- **AND** use responsive colors that work in both light and dark modes
+- **AND** ensure code blocks have proper contrast for readability
+
 #### Scenario: Clear API key
 - **WHEN** a user clicks "Clear" or "Remove" API key button
 - **THEN** the system SHALL remove the API key from localStorage
