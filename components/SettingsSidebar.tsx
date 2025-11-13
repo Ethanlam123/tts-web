@@ -19,6 +19,7 @@ interface SettingsSidebarProps {
   totalCharacters: number;
   isGeneratingAll: boolean;
   hasReadyLines: boolean;
+  onApiKeyChange?: () => void;
 }
 
 export default function SettingsSidebar({
@@ -33,6 +34,7 @@ export default function SettingsSidebar({
   totalCharacters,
   isGeneratingAll,
   hasReadyLines,
+  onApiKeyChange,
 }: SettingsSidebarProps) {
   const [apiKeyStatus, setApiKeyStatus] = useState<'default' | 'custom' | 'none'>('default');
 
@@ -83,7 +85,10 @@ export default function SettingsSidebar({
             </p>
           </div>
           <ApiKeyInput
-            onApiKeyChange={() => setApiKeyStatus(getApiKeyStatus())}
+            onApiKeyChange={() => {
+              setApiKeyStatus(getApiKeyStatus());
+              onApiKeyChange?.();
+            }}
             onStatusChange={setApiKeyStatus}
             trigger={
               <button className="ml-3 text-xs bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-1 rounded transition-colors">

@@ -54,49 +54,50 @@ export default function Dashboard() {
     localStorage.setItem('speed', speed.toString());
   }, [speed]);
 
+  // Fetch voices function
+  const fetchVoices = async () => {
+    try {
+      const effectiveApiKey = getEffectiveApiKey();
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      // Add API key to headers if available
+      if (effectiveApiKey) {
+        headers['x-api-key'] = effectiveApiKey;
+      }
+
+      const response = await fetch('/api/voices', {
+        method: 'GET',
+        headers,
+      });
+
+      if (response.ok) {
+        const voicesData = await response.json();
+        const voicesList = voicesData.voices || [];
+
+        // Filter out voices without valid voice_id
+        const validVoices = voicesList.filter(voice =>
+          voice && voice.voice_id && typeof voice.voice_id === 'string' && voice.voice_id.trim() !== ''
+        );
+
+        setVoices(validVoices);
+      } else {
+        // Handle 401 gracefully - this is expected when no API key is configured
+        if (response.status === 401) {
+          console.log('API key required - please configure your ElevenLabs API key');
+        } else {
+          console.warn('Voices API temporarily unavailable:', response.status);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch voices:', error);
+    }
+  };
+
   // Fetch voices on mount
   useEffect(() => {
-    const fetchVoices = async () => {
-      try {
-        const effectiveApiKey = getEffectiveApiKey();
-
-        const headers: HeadersInit = {
-          'Content-Type': 'application/json',
-        };
-
-        // Add API key to headers if available
-        if (effectiveApiKey) {
-          headers['x-api-key'] = effectiveApiKey;
-        }
-
-        const response = await fetch('/api/voices', {
-          method: 'GET',
-          headers,
-        });
-
-        if (response.ok) {
-          const voicesData = await response.json();
-          const voicesList = voicesData.voices || [];
-
-          // Filter out voices without valid voice_id
-          const validVoices = voicesList.filter(voice =>
-            voice && voice.voice_id && typeof voice.voice_id === 'string' && voice.voice_id.trim() !== ''
-          );
-
-          setVoices(validVoices);
-        } else {
-          // Handle 401 gracefully - this is expected when no API key is configured
-          if (response.status === 401) {
-            console.log('API key required - please configure your ElevenLabs API key');
-          } else {
-            console.warn('Voices API temporarily unavailable:', response.status);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to fetch voices:', error);
-      }
-    };
-
     fetchVoices();
   }, []);
 
@@ -410,6 +411,7 @@ export default function Dashboard() {
               totalCharacters={totalCharacters}
               isGeneratingAll={isGeneratingAll}
               hasReadyLines={lines.some(line => line.status === 'ready')}
+              onApiKeyChange={fetchVoices}
             />
           </div>
         </div>
