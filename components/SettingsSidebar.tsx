@@ -125,7 +125,7 @@ export default function SettingsSidebar({
       </div>
 
       {/* Character Counter */}
-      <div className="space-y-2 mt-6">
+      <div className="mt-6">
         <div className="flex justify-between text-sm">
           <span className="text-foreground">Character Count</span>
           <span className={
@@ -137,18 +137,6 @@ export default function SettingsSidebar({
           }>
             {totalCharacters.toLocaleString()} / 10,000
           </span>
-        </div>
-        <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-          <div
-            className={`h-full transition-all duration-300 ${
-              characterStatus === 'warning'
-                ? 'bg-amber-500'
-                : characterStatus === 'error'
-                ? 'bg-red-500'
-                : 'bg-cyan-primary'
-            }`}
-            style={{ width: `${Math.min((totalCharacters / 10000) * 100, 100)}%` }}
-          />
         </div>
       </div>
     </div>

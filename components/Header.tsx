@@ -14,16 +14,7 @@ export default function Header() {
             </h1>
           </div>
 
-          {/* Center - Navigation buttons */}
-          <div className="flex items-center space-x-4">
-            <button className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-md hover:bg-accent/50">
-              Dashboard
-            </button>
-            <button className="text-sm font-medium bg-cyan-primary text-primary-foreground hover:bg-cyan-600 transition-colors px-4 py-2 rounded-md">
-              Upgrade
-            </button>
-          </div>
-
+  
           {/* Right side - User avatar */}
           <div className="flex items-center">
             <button className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary hover:bg-secondary/80 transition-colors">

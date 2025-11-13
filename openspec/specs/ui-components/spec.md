@@ -4,15 +4,21 @@
 TBD - created by archiving change add-tts-audio-generation. Update Purpose after archive.
 ## Requirements
 ### Requirement: Application Header
-The system SHALL display a header with branding and navigation controls.
+The system SHALL display a simplified header with branding and user controls.
 
 #### Scenario: Display header elements
 - **WHEN** the application loads
 - **THEN** the system SHALL display "AudioConverter" logo on the left side
-- **AND** display "Dashboard" button in the header (non-functional placeholder)
-- **AND** display "Upgrade" button in cyan/blue color
 - **AND** display user avatar icon on the right side
 - **AND** use dark background color for header
+- **AND** maintain proper spacing between logo and avatar
+- **AND** use flex justify-between layout for balanced positioning
+
+#### Scenario: Remove placeholder navigation buttons
+- **WHEN** the header renders
+- **THEN** the system SHALL NOT display "Dashboard" button
+- **AND** SHALL NOT display "Upgrade" button
+- **AND** SHALL maintain clean layout without center navigation section
 
 ### Requirement: Page Title
 The system SHALL display a prominent page title.
@@ -135,26 +141,32 @@ The system SHALL display primary action buttons in the settings panel.
 - **AND** reduce opacity to indicate disabled state
 
 ### Requirement: Character Counter Display
-The system SHALL display character count with progress visualization.
+The system SHALL display character count with color-coded warnings but without visual progress bar.
 
-#### Scenario: Display character count
+#### Scenario: Display simplified character count
 - **WHEN** settings panel renders with loaded lines
 - **THEN** the system SHALL display "Character Count" label
-- **AND** show count in format "1,254 / 10,000"
-- **AND** display horizontal progress bar below count
-- **AND** fill progress bar proportionally (e.g., 12.54% for 1,254 characters)
-- **AND** use cyan/blue color for progress fill
+- **AND** show count in format "X,XXX / 10,000"
+- **AND** SHALL NOT display a progress bar below the count
+- **AND** maintain compact layout with just the numeric display
 
 #### Scenario: Update character count in real-time
 - **WHEN** file is uploaded or lines change
 - **THEN** the system SHALL recalculate total characters
 - **AND** update displayed count immediately
-- **AND** update progress bar fill percentage
+- **AND** maintain color-coded warnings based on thresholds
 
 #### Scenario: Warn when approaching limit
 - **WHEN** character count exceeds 8,000 characters
 - **THEN** the system SHALL change counter color to yellow/orange
-- **AND** change progress bar color to indicate warning
+- **WHEN** character count exceeds 10,000 characters
+- **THEN** the system SHALL change counter color to red
+
+#### Scenario: Display character counter with proper spacing
+- **WHEN** the character counter renders
+- **THEN** the system SHALL maintain proper spacing with other settings panel elements
+- **AND** ensure text remains readable with color coding
+- **AND** use consistent typography with other sidebar elements
 
 ### Requirement: Responsive Layout
 The system SHALL adapt layout for different screen sizes.
