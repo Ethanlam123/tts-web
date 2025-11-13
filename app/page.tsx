@@ -78,7 +78,7 @@ export default function Dashboard() {
         const voicesList = voicesData.voices || [];
 
         // Filter out voices without valid voice_id
-        const validVoices = voicesList.filter(voice =>
+        const validVoices = voicesList.filter((voice: any) =>
           voice && voice.voice_id && typeof voice.voice_id === 'string' && voice.voice_id.trim() !== ''
         );
 
