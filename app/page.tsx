@@ -6,6 +6,11 @@ import LineItem from '@/components/LineItem';
 import SettingsSidebar from '@/components/SettingsSidebar';
 import { Voice, Line } from '@/types';
 import JSZip from 'jszip';
+import {
+  getEffectiveApiKey,
+  initializeApiKeyStatus,
+  getApiKeyStatus
+} from '@/lib/api-key-manager';
 
 export default function Dashboard() {
   // State management
@@ -16,6 +21,11 @@ export default function Dashboard() {
   const [isGeneratingAll, setIsGeneratingAll] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Initialize API key status on component mount
+  useEffect(() => {
+    initializeApiKeyStatus();
+  }, []);
 
   // Load preferences from localStorage
   useEffect(() => {
@@ -49,7 +59,25 @@ export default function Dashboard() {
     const fetchVoices = async () => {
       try {
         console.log('Fetching voices...');
-        const response = await fetch('/api/voices');
+        const effectiveApiKey = getEffectiveApiKey();
+
+        const headers: HeadersInit = {
+          'Content-Type': 'application/json',
+        };
+
+        // Add API key to headers if available
+        if (effectiveApiKey) {
+          headers['x-api-key'] = effectiveApiKey;
+          console.log('Using custom API key for voices request');
+        } else {
+          console.log('Using default API key for voices request');
+        }
+
+        const response = await fetch('/api/voices', {
+          method: 'GET',
+          headers,
+        });
+
         if (response.ok) {
           const voicesData = await response.json();
           console.log('Voices API response:', voicesData);
@@ -69,6 +97,8 @@ export default function Dashboard() {
           setVoices(validVoices);
         } else {
           console.error('Voices API response not OK:', response.status);
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Error details:', errorData);
         }
       } catch (error) {
         console.error('Failed to fetch voices:', error);
@@ -159,11 +189,23 @@ export default function Dashboard() {
     ));
 
     try {
+      const effectiveApiKey = getEffectiveApiKey();
+
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+
+      // Add API key to headers if available
+      if (effectiveApiKey) {
+        headers['x-api-key'] = effectiveApiKey;
+        console.log('Using custom API key for TTS request');
+      } else {
+        console.log('Using default API key for TTS request');
+      }
+
       const response = await fetch('/api/tts', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           text: line.text,
           voiceId: selectedVoiceId,
@@ -171,7 +213,7 @@ export default function Dashboard() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || 'Failed to generate audio');
       }
 

@@ -1,7 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Voice } from "@/types";
 import { formatVoiceName } from "@/types";
+import { ApiKeyInput } from "@/components/ApiKeyInput";
+import { getApiKeyStatus } from "@/lib/api-key-manager";
+import { Shield, Key } from "lucide-react";
 
 interface SettingsSidebarProps {
   voices: Voice[];
@@ -30,6 +34,12 @@ export default function SettingsSidebar({
   isGeneratingAll,
   hasReadyLines,
 }: SettingsSidebarProps) {
+  const [apiKeyStatus, setApiKeyStatus] = useState<'default' | 'custom' | 'none'>('default');
+
+  useEffect(() => {
+    setApiKeyStatus(getApiKeyStatus());
+  }, []);
+
   // Calculate character count status
   const getCharacterCountStatus = () => {
     if (totalCharacters > 8000) return "warning";
@@ -44,6 +54,45 @@ export default function SettingsSidebar({
       <h2 className="text-xl font-semibold text-foreground mb-6">
         Settings & Controls
       </h2>
+
+      {/* API Key Section */}
+      <div className="space-y-4 mb-6 p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
+        <div className="flex items-center gap-2 mb-3">
+          <Shield className="h-4 w-4" />
+          <span className="text-sm font-medium">API Configuration</span>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <Key className="h-3 w-3" />
+              <span className="text-sm">
+                {apiKeyStatus === 'custom'
+                  ? 'Using your API key'
+                  : apiKeyStatus === 'default'
+                  ? 'Using default API key'
+                  : 'No API key configured'
+                }
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {apiKeyStatus === 'custom'
+                ? 'Higher usage limits with your personal key.'
+                : 'Configure your own API key for higher limits.'
+              }
+            </p>
+          </div>
+          <ApiKeyInput
+            onApiKeyChange={() => setApiKeyStatus(getApiKeyStatus())}
+            onStatusChange={setApiKeyStatus}
+            trigger={
+              <button className="ml-3 text-xs bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-1 rounded transition-colors">
+                {apiKeyStatus === 'custom' ? 'Update' : 'Configure'}
+              </button>
+            }
+          />
+        </div>
+      </div>
 
       {/* Voice Selection */}
       <div className="space-y-4">

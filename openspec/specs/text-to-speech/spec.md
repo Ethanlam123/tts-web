@@ -26,9 +26,10 @@ The system SHALL integrate with ElevenLabs API using the official @elevenlabs/el
 
 #### Scenario: Handle API authentication
 - **WHEN** initializing the ElevenLabs client
-- **THEN** the system SHALL read ELEVENLABS_API_KEY from environment variables
-- **AND** pass the API key to the client constructor
-- **AND** ensure the API key is never exposed to the client-side code
+- **THEN** the system SHALL read API key from request headers or environment variables
+- **AND** prioritize client-side API key over server-side environment variable
+- **AND** ensure client-side API keys are handled securely without server logging
+- **AND** fallback to server-side ELEVENLABS_API_KEY when no client key provided
 
 #### Scenario: Handle API rate limiting
 - **WHEN** ElevenLabs API returns a rate limit error

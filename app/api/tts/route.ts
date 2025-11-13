@@ -3,6 +3,17 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
+    // Get API key from headers or fallback to environment variable
+    const apiKey = request.headers.get('x-api-key') || process.env.ELEVENLABS_API_KEY;
+
+    // Ensure API key is available
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'API key is required. Please configure your ElevenLabs API key in settings.' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { text, voiceId } = body;
 
@@ -22,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     const elevenlabs = new ElevenLabsClient({
-      apiKey: process.env.ELEVENLABS_API_KEY,
+      apiKey: apiKey,
     });
 
     const audio = await elevenlabs.textToSpeech.convert(voiceId, {

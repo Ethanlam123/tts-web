@@ -30,6 +30,23 @@ export interface AppSettings {
 
 export type LineStatus = Line['status'];
 
+// API Key Management Types
+export type ApiKeyStatus = 'default' | 'custom' | 'none';
+
+export interface ValidationResult {
+  isValid: boolean;
+  error?: string;
+  details?: string;
+}
+
+export interface ApiKeyManager {
+  storeApiKey: (apiKey: string) => void;
+  getStoredApiKey: () => string | null;
+  clearStoredApiKey: () => void;
+  validateApiKeyFormat: (apiKey: string) => boolean;
+  testApiKey: (apiKey: string) => Promise<ValidationResult>;
+}
+
 // Helper functions for voice formatting
 export function formatVoiceName(voice: Voice): string {
   const parts = [voice.name];

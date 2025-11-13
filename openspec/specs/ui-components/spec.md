@@ -4,15 +4,31 @@
 TBD - created by archiving change add-tts-audio-generation. Update Purpose after archive.
 ## Requirements
 ### Requirement: Application Header
-The system SHALL display a simplified header with branding and user controls.
+The system SHALL display a simplified header with branding and API key status indicator.
 
 #### Scenario: Display header elements
 - **WHEN** the application loads
 - **THEN** the system SHALL display "AudioConverter" logo on the left side
-- **AND** display user avatar icon on the right side
+- **AND** display a key icon instead of user avatar on the right side
+- **AND** make the key icon clickable to show API key status
 - **AND** use dark background color for header
-- **AND** maintain proper spacing between logo and avatar
+- **AND** maintain proper spacing between logo and key icon
 - **AND** use flex justify-between layout for balanced positioning
+
+#### Scenario: Display API key status on key icon click
+- **WHEN** a user clicks the key icon in the header
+- **THEN** the system SHALL display a dropdown or popover menu
+- **AND** show current API key status ("Using Default Key" or "Using Your Key")
+- **AND** include option to configure or change API key
+- **AND** include "Test Connection" option for API key validation
+- **AND** include link to API key documentation
+
+#### Scenario: Update key icon appearance based on status
+- **WHEN** using default server-side API key
+- **THEN** the system SHALL display key icon in default styling
+- **WHEN** using user-provided API key
+- **THEN** the system SHALL display key icon with distinct styling (e.g., different color)
+- **AND** maintain consistent visual hierarchy with other header elements
 
 #### Scenario: Remove placeholder navigation buttons
 - **WHEN** the header renders
