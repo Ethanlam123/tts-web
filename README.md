@@ -1,36 +1,288 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AudioConverter - Text-to-Speech Web Application
 
-## Getting Started
+A modern, feature-rich text-to-speech application built with Next.js 16 and ElevenLabs API. Convert text files into high-quality audio with granular control over voice selection, playback speed, and batch operations.
 
-First, run the development server:
+## ✨ Features
 
+### 🎙️ Core Functionality
+- **Text-to-Speech Conversion**: Convert .txt files to high-quality MP3 audio
+- **Line-by-Line Processing**: Generate individual audio files for each text line
+- **Voice Selection**: Choose from 100+ ElevenLabs voices with preview
+- **Playback Speed Control**: Adjustable speed from 0.5x to 2.0x
+- **Batch Operations**: Generate all, download all as ZIP, clear all
+
+### 🔐 API Key Management
+- **Flexible API Key Support**: Use server-side or configure your own ElevenLabs API key
+- **Secure Storage**: Client-side API keys stored securely in browser localStorage
+- **Visual Status Indicator**: Key icon shows current API key status in header
+- **Easy Configuration**: Simple dialog interface for API key management
+- **Automatic Refresh**: Voices update immediately when API key is configured
+
+### 🎨 User Interface
+- **Modern Dark Theme**: Clean, professional interface with dark mode
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
+- **Real-time Feedback**: Status indicators for each line generation
+- **Drag & Drop**: Intuitive file upload with drag-and-drop support
+- **Accessibility**: Proper contrast ratios and keyboard navigation
+
+### ⚡ Technical Features
+- **Server-Side Rendering**: Fast initial load with Next.js 16 App Router
+- **TypeScript**: Full type safety throughout the application
+- **Error Handling**: Graceful error handling with user-friendly messages
+- **Performance Optimized**: Sequential processing to prevent API rate limits
+- **Modern Stack**: React 19, Tailwind CSS v4, shadcn/ui components
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+
+- ElevenLabs API key (optional for testing)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd tts-web
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   Add your ElevenLabs API key to `.env.local`:
+   ```bash
+   ELEVENLABS_API_KEY=sk_your_actual_api_key_here
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open the application**
+
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🔧 Configuration
+
+### API Key Setup
+
+#### Option 1: Server-Side (Default)
+Add your API key to `.env.local`:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+ELEVENLABS_API_KEY=sk_your_api_key_here
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### Option 2: Client-Side (Recommended for users)
+1. Click the **key icon** in the top-right header
+2. Click **"Configure"** or **"Update"**
+3. Enter your ElevenLabs API key (starts with `sk_`)
+4. Click **"Save API Key"**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### API Key Format
+ElevenLabs API keys must:
+- Start with `sk_`
+- Be followed by alphanumeric characters
+- Example: `sk_1234567890abcdef1234567890abcdef`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📖 Usage Guide
 
-## Learn More
+### Basic Workflow
 
-To learn more about Next.js, take a look at the following resources:
+1. **Configure API Key**: Set up your ElevenLabs API key
+2. **Upload Text File**: Drag and drop or click to upload a .txt file
+3. **Select Voice**: Choose your preferred voice from the dropdown
+4. **Adjust Speed**: Set playback speed (0.5x - 2.0x)
+5. **Generate Audio**: Click "Generate All" or generate individual lines
+6. **Play & Download**: Play audio inline or download all as ZIP
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Advanced Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### Individual Line Control
+- **Regenerate**: Recreate audio for specific lines
+- **Play/Pause**: Control playback for each line
+- **Delete**: Remove individual lines
 
-## Deploy on Vercel
+#### Batch Operations
+- **Generate All**: Process all lines sequentially
+- **Download All**: Create ZIP file with all MP3 files
+- **Clear All**: Remove all lines and start fresh
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### Voice Customization
+- **Voice Selection**: 100+ ElevenLabs voices
+- **Voice Information**: Shows accent, gender, and language
+- **Default Voice**: Set preferred voice for all lines
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🏗️ Project Structure
+
+```
+tts-web/
+├── app/
+│   ├── api/
+│   │   ├── voices/route.ts        # ElevenLabs voices API
+│   │   └── tts/route.ts           # Text-to-speech conversion
+│   ├── layout.tsx                 # Root layout
+│   ├── page.tsx                   # Main dashboard
+│   └── globals.css                # Global styles
+├── components/
+│   ├── ui/                        # shadcn/ui components
+│   ├── Header.tsx                 # App header with API key status
+│   ├── SettingsSidebar.tsx        # Right sidebar with controls
+│   ├── ApiKeyInput.tsx            # API key configuration
+│   ├── UploadArea.tsx             # File upload component
+│   ├── LineItem.tsx               # Individual line display
+│   └── StatusBadge.tsx            # Status indicators
+├── lib/
+│   └── api-key-manager.ts         # API key management utilities
+├── types/
+│   └── index.ts                   # TypeScript type definitions
+├── openspec/                      # Specifications and documentation
+└── public/                        # Static assets
+```
+
+## 🛠️ Development
+
+### Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+```
+
+### Technology Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript (strict mode)
+- **Styling**: Tailwind CSS v4
+- **UI Components**: shadcn/ui (Radix UI)
+- **Icons**: Lucide React
+- **Audio Processing**: ElevenLabs SDK
+- **File Processing**: JSZip for ZIP creation
+
+### API Integration
+
+#### ElevenLabs API
+- **Voices**: Fetch available voices with metadata
+- **TTS**: Convert text to speech with configurable voice and model
+- **Model**: Uses `eleven_multilingual_v2` (32 languages)
+- **Format**: MP3 at 44.1kHz, 128kbps
+
+## 🔒 Security
+
+### API Key Management
+- **Server-Side Keys**: Stored in environment variables
+- **Client-Side Keys**: Stored in localStorage, never logged
+- **HTTPS Only**: All API calls made over secure connections
+- **No URL Exposure**: API keys transmitted in headers, not URLs
+
+### Best Practices
+- Input validation for API key format
+- Error handling without exposing sensitive data
+- Graceful fallbacks for missing configurations
+
+## 🌐 Deployment
+
+### Environment Variables
+```bash
+ELEVENLABS_API_KEY=your_server_side_api_key
+```
+
+### Vercel Deployment
+```bash
+npm run build
+vercel --prod
+```
+
+### Docker Support
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+## 📝 API Reference
+
+### Voices API
+```typescript
+GET /api/voices
+Headers: { x-api-key: "your_api_key" }
+Response: { voices: Voice[] }
+```
+
+### TTS API
+```typescript
+POST /api/tts
+Headers: { x-api-key: "your_api_key" }
+Body: { text: string, voiceId: string }
+Response: Audio buffer (MP3)
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+### Development Guidelines
+- Follow TypeScript strict mode practices
+- Use shadcn/ui components for consistency
+- Maintain dark theme compatibility
+- Test API key configuration flows
+- Ensure responsive design on all devices
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+### Common Issues
+
+**API Key Not Working**
+- Verify the key starts with `sk_`
+- Check key validity in ElevenLabs dashboard
+- Ensure proper format (no extra spaces)
+
+**No Voices Available**
+- Click the key icon to check API key status
+- Try reconfiguring your API key
+- Check internet connection
+
+**Audio Generation Fails**
+- Verify text file format (.txt only)
+- Check character count limits (10,000 max)
+- Ensure API key has sufficient quota
+
+### Getting Help
+
+- Check the [Issues](../../issues) page for known problems
+- Create a new issue with detailed error information
+- Include browser console logs for debugging
+
+## 🔗 Related Links
+
+- [ElevenLabs API Documentation](https://elevenlabs.io/docs)
+- [ElevenLabs Voice Library](https://elevenlabs.io/voice-library)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [shadcn/ui Components](https://ui.shadcn.com)
+- [Tailwind CSS](https://tailwindcss.com)
+
+---
+
+Built with ❤️ using Next.js, React, and ElevenLabs API

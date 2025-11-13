@@ -56,16 +56,77 @@ AudioConverter is a Next.js-based text-to-speech web application that converts t
 
 ## ElevenLabs API Integration
 
-### API Key Security
+### API Key Management
+
+The application supports a **hybrid API key approach**:
+
+#### Server-Side API Keys (Default)
 ```typescript
 // ✅ CORRECT - Server-side only
 // app/api/tts/route.ts
 const elevenlabs = new ElevenLabsClient({
   apiKey: process.env.ELEVENLABS_API_KEY, // Server environment variable
 });
+```
 
-// ❌ WRONG - Never expose client-side
-const apiKey = "sk_..."; // Never hardcode or use in client components
+#### Client-Side API Keys (User Configured)
+```typescript
+// ✅ CORRECT - User-configured client keys
+// app/api/tts/route.ts
+export async function POST(request: Request) {
+  // Get API key from headers or fallback to environment variable
+  const apiKey = request.headers.get('x-api-key') || process.env.ELEVENLABS_API_KEY;
+
+  if (!apiKey) {
+    return NextResponse.json(
+      { error: 'API key is required. Please configure your ElevenLabs API key in settings.' },
+      { status: 401 }
+    );
+  }
+
+  const elevenlabs = new ElevenLabsClient({ apiKey });
+  // ... rest of implementation
+}
+```
+
+#### API Key Manager Usage
+```typescript
+import { apiKeyManager, getEffectiveApiKey, getApiKeyStatus } from '@/lib/api-key-manager';
+
+// Get current API key (client-first, server fallback)
+const effectiveApiKey = getEffectiveApiKey();
+
+// Check API key status
+const status = getApiKeyStatus(); // 'default' | 'custom' | 'none'
+
+// Store user API key
+await apiKeyManager.storeApiKey('sk_user_api_key_here');
+
+// Clear user API key
+apiKeyManager.clearStoredApiKey();
+```
+
+### Security Best Practices
+```typescript
+// ❌ WRONG - Never expose API key client-side
+const apiKey = "sk_..."; // Never hardcode in client components
+
+// ❌ WRONG - Don't log API keys
+console.log('API Key:', apiKey); // NEVER log actual keys
+
+// ✅ CORRECT - Use headers for transmission
+const headers = { 'x-api-key': apiKey, 'Content-Type': 'application/json' };
+
+// ✅ CORRECT - SSR-safe localStorage access
+const getStoredApiKey = (): string | null => {
+  try {
+    if (typeof window === 'undefined') return null; // SSR check
+    return localStorage.getItem('apiKey');
+  } catch (error) {
+    console.error('Failed to retrieve API key:', error);
+    return null;
+  }
+};
 ```
 
 ### SDK Usage Patterns
@@ -158,7 +219,7 @@ const colors = {
 ### Component Layout Structure
 ```
 app/page.tsx
-├── Header (AudioConverter logo, Dashboard, Upgrade, Avatar)
+├── Header (AudioConverter logo, Key icon for API status)
 ├── Main Container (grid lg:grid-cols-[1fr_350px])
 │   ├── Left Column (Content Area)
 │   │   ├── Page Title ("Text-to-Speech Dashboard")
@@ -170,12 +231,13 @@ app/page.tsx
 │   │           ├── StatusBadge (colored dot + text)
 │   │           └── Action buttons (regenerate, play, delete)
 │   └── Right Column (Settings Sidebar - fixed 300-350px)
+│       ├── API Configuration Section (status indicator + configure button)
 │       ├── Voice Dropdown ("Rachel (American, Female)")
 │       ├── Speed Slider (0.5x - 2.0x)
 │       ├── Generate All Button (cyan, Sparkles icon)
 │       ├── Download All Button (gray, Download icon)
 │       ├── Clear All Button (red text, Trash icon)
-│       └── Character Counter (progress bar)
+│       └── Character Counter (text count, no progress bar)
 ```
 
 ### Status Indicators
@@ -208,7 +270,11 @@ import {
   Trash2,        // Clear All, delete line
   RotateCw,      // Regenerate line
   Play,          // Play audio
-  User,          // Avatar
+  Key,           // API key icon in header
+  Shield,        // API security icon
+  Check,         // Success indicator
+  X,            // Close/delete
+  ExternalLink,  // Documentation links
 } from 'lucide-react';
 ```
 
@@ -228,22 +294,34 @@ tts-web/
 │   │   ├── button.tsx
 │   │   ├── select.tsx
 │   │   ├── slider.tsx
-│   │   └── badge.tsx
-│   ├── Header.tsx                 # App header
+│   │   ├── badge.tsx
+│   │   ├── dropdown-menu.tsx     # API key status dropdown
+│   │   ├── dialog.tsx             # API key configuration dialog
+│   │   ├── tabs.tsx               # API key help tabs
+│   │   ├── alert.tsx              # Status and error messages
+│   │   └── input.tsx              # API key input field
+│   ├── Header.tsx                 # App header with API key status
+│   ├── ApiKeyInput.tsx            # API key configuration component
 │   ├── UploadArea.tsx             # File upload zone
 │   ├── LineItem.tsx               # Individual line display
 │   ├── StatusBadge.tsx            # Status indicator
 │   ├── SettingsSidebar.tsx        # Right sidebar
-│   └── CharacterCounter.tsx       # Progress bar counter
+│   └── CharacterCounter.tsx       # Text counter (no progress bar)
+├── lib/
+│   └── api-key-manager.ts         # API key management utilities
 ├── types/
 │   └── index.ts                   # Shared TypeScript types
-├── openspec/                      # Specifications (see AGENTS.md)
+├── openspec/                      # Specifications and documentation
 │   ├── project.md
 │   ├── changes/
+│   │   ├── user-api-key/          # User API key management
 │   │   └── add-tts-audio-generation/
 │   └── specs/
+│       ├── api-management/        # API key management specs
+│       └── ui-components/         # UI component specs
 ├── .env.local                     # ELEVENLABS_API_KEY (not in git)
-└── .env.example                   # Template for env vars
+├── .env.example                   # Template for env vars
+└── .gitignore                     # Git ignore file
 ```
 
 ## Type Definitions
@@ -275,6 +353,22 @@ export interface AppSettings {
   voiceId: string;
   speed: number;
 }
+
+export interface ApiKeyManager {
+  storeApiKey: (apiKey: string) => void;
+  getStoredApiKey: () => string | null;
+  clearStoredApiKey: () => void;
+  validateApiKeyFormat: (apiKey: string) => boolean;
+  testApiKey: (apiKey: string) => Promise<ValidationResult>;
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  error?: string;
+  details?: string;
+}
+
+export type ApiKeyStatus = 'default' | 'custom' | 'none';
 ```
 
 ## State Management Patterns
