@@ -1,6 +1,6 @@
 # AudioConverter - Text-to-Speech Web Application
 
-A modern, feature-rich text-to-speech application built with Next.js 16 and ElevenLabs API. Convert text files into high-quality audio with granular control over voice selection, playback speed, and batch operations.
+A modern, production-ready text-to-speech application built with Next.js 16 and ElevenLabs API. Convert text files into high-quality audio with granular control over voice selection, playback speed, and batch operations.
 
 ## ✨ Features
 
@@ -35,14 +35,14 @@ A modern, feature-rich text-to-speech application built with Next.js 16 and Elev
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+
-- ElevenLabs API key (optional for testing)
+- Node.js 18+ (recommended: Node.js 20+)
+- ElevenLabs API key (optional for testing, required for production use)
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/yusinglam/tts-web.git
    cd tts-web
    ```
 
@@ -160,21 +160,25 @@ npm run lint         # Run ESLint
 
 ### Technology Stack
 
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript (strict mode)
+- **Framework**: Next.js 16.0.2 (App Router)
+- **Language**: TypeScript 5+ (strict mode)
+- **Frontend**: React 19.2.0
 - **Styling**: Tailwind CSS v4
-- **UI Components**: shadcn/ui (Radix UI)
-- **Icons**: Lucide React
-- **Audio Processing**: ElevenLabs SDK
-- **File Processing**: JSZip for ZIP creation
+- **UI Components**: shadcn/ui (Radix UI primitives)
+- **Icons**: Lucide React v0.553.0
+- **Audio Processing**: @elevenlabs/elevenlabs-js v2.23.0
+- **File Processing**: JSZip v3.10.1
+- **Build Tools**: ESLint 9, TypeScript compiler
 
 ### API Integration
 
 #### ElevenLabs API
-- **Voices**: Fetch available voices with metadata
+- **Voices**: Fetch available voices with accent, gender, and language metadata
 - **TTS**: Convert text to speech with configurable voice and model
-- **Model**: Uses `eleven_multilingual_v2` (32 languages)
-- **Format**: MP3 at 44.1kHz, 128kbps
+- **Model**: Uses `eleven_multilingual_v2` (supports 32 languages)
+- **Format**: High-quality MP3 at 44.1kHz, 128kbps
+- **Rate Limiting**: Built-in sequential processing with 500ms delays
+- **Error Handling**: Comprehensive error handling with user-friendly messages
 
 ## 🔒 Security
 
@@ -185,9 +189,12 @@ npm run lint         # Run ESLint
 - **No URL Exposure**: API keys transmitted in headers, not URLs
 
 ### Best Practices
-- Input validation for API key format
+- Input validation for API key format (`sk_[a-zA-Z0-9]{16,}`)
 - Error handling without exposing sensitive data
 - Graceful fallbacks for missing configurations
+- SSR-safe localStorage access patterns
+- Memory cleanup for audio object URLs
+- No API key logging or URL exposure
 
 ## 🌐 Deployment
 
@@ -213,6 +220,31 @@ RUN npm run build
 EXPOSE 3000
 CMD ["npm", "start"]
 ```
+
+## 🎯 Project Status
+
+### ✅ Production Ready
+This application is production-ready with comprehensive features:
+- **Stable Implementation**: All core features fully implemented and tested
+- **Security**: Comprehensive API key management with hybrid server/client approach
+- **Performance**: Optimized for handling large text files with sequential processing
+- **Error Handling**: User-friendly error messages and graceful fallbacks
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+
+### 🔄 Recent Updates
+- **TypeScript Build Optimization**: Resolved build errors for Vercel deployment
+- **Light Theme Implementation**: Updated UI to match professional design mockup
+- **Enhanced API Key Management**: Improved validation, testing, and user experience
+- **Documentation**: Comprehensive documentation with OpenSpec integration
+- **GitHub Setup**: Added proper repository configuration and contribution guidelines
+
+### 📊 Current Capabilities
+- **File Processing**: Handles .txt files with up to 10,000 characters
+- **Voice Library**: Access to 100+ ElevenLabs voices with detailed metadata
+- **Batch Operations**: Sequential processing prevents API rate limits
+- **Audio Quality**: High-quality MP3 output (44.1kHz, 128kbps)
+- **Memory Management**: Proper cleanup of audio object URLs
+- **Character Limits**: Warns at 8,000 characters, maximum 10,000
 
 ## 📝 API Reference
 
