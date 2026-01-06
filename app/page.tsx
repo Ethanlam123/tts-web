@@ -20,6 +20,7 @@ import {
   createZipDownload,
   revokeAudioUrls,
 } from '@/lib/audio-generator';
+import { LIMITS } from '@/lib/constants';
 
 export default function Dashboard() {
   // State management
@@ -162,7 +163,7 @@ export default function Dashboard() {
       await generateAudio(line.id);
 
       if (i < lines.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 500)); // TODO: Extract to constant
       }
     }
 

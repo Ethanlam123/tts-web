@@ -1,8 +1,11 @@
 // Preferences Manager - Centralized localStorage handling for user preferences
 
+import { STORAGE_KEYS as COMMON_STORAGE_KEYS, LIMITS } from '@/lib/constants';
+import { validateVoiceId } from '@/lib/validators';
+
 const STORAGE_KEYS = {
-  VOICE_ID: 'voiceId',
-  SPEED: 'speed',
+  VOICE_ID: COMMON_STORAGE_KEYS.VOICE_ID,
+  SPEED: COMMON_STORAGE_KEYS.SPEED,
 } as const;
 
 const DEFAULT_VALUES = {
@@ -17,11 +20,11 @@ function isBrowser(): boolean {
 }
 
 /**
- * Validate voice ID format
+ * Validate voice ID format using centralized validator
  */
 function isValidVoiceId(voiceId: string): boolean {
-  // Voice IDs should not contain parentheses (formatted names) and should be reasonably short
-  return !voiceId.includes('(') && voiceId.length <= 50 && voiceId.trim().length > 0;
+  const validation = validateVoiceId(voiceId);
+  return validation.isValid;
 }
 
 /**

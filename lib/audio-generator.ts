@@ -2,6 +2,8 @@
 
 import { Line } from '@/types';
 import { getEffectiveApiKey } from '@/lib/api-key-manager';
+import { validateVoiceId, validateText, validateAudioBlob } from '@/lib/validators';
+import { API_CONFIG, ERROR_MESSAGES, FILE_NAMING, TIMING } from '@/lib/constants';
 import JSZip from 'jszip';
 
 export interface GenerateAudioOptions {
@@ -22,11 +24,20 @@ export interface GenerateAudioResult {
 export async function generateSingleAudio(options: GenerateAudioOptions): Promise<GenerateAudioResult> {
   const { voiceId, text } = options;
 
-  // Validate voice_id format
-  if (voiceId.includes('(') || voiceId.includes('-') || voiceId.length > 50) {
+  // Validate inputs using centralized validators
+  const voiceValidation = validateVoiceId(voiceId);
+  if (!voiceValidation.isValid) {
     return {
       success: false,
-      error: 'Invalid voice ID format',
+      error: voiceValidation.error || ERROR_MESSAGES.VOICE_ID_INVALID,
+    };
+  }
+
+  const textValidation = validateText(text);
+  if (!textValidation.isValid) {
+    return {
+      success: false,
+      error: textValidation.error || ERROR_MESSAGES.TEXT_REQUIRED,
     };
   }
 
@@ -57,10 +68,12 @@ export async function generateSingleAudio(options: GenerateAudioOptions): Promis
 
     const audioBlob = await response.blob();
 
-    if (audioBlob.size === 0) {
+    // Validate audio blob using centralized validator
+    const blobValidation = validateAudioBlob(audioBlob);
+    if (!blobValidation.isValid) {
       return {
         success: false,
-        error: 'Received empty audio file',
+        error: blobValidation.error || ERROR_MESSAGES.EMPTY_AUDIO,
       };
     }
 
@@ -88,7 +101,7 @@ export async function generateBatchAudio(
   lines: Line[],
   voiceId: string,
   onProgress?: (lineId: string, status: 'processing' | 'ready' | 'error', result?: GenerateAudioResult) => void,
-  delayBetweenRequests: number = 500
+  delayBetweenRequests: number = TIMING.AUDIO_GENERATION_DELAY
 ): Promise<void> {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -125,7 +138,7 @@ export async function createZipDownload(lines: Line[]): Promise<{ success: boole
   if (readyLines.length === 0) {
     return {
       success: false,
-      error: 'No audio files ready for download',
+      error: ERROR_MESSAGES.NO_AUDIO_READY,
     };
   }
 
@@ -133,8 +146,8 @@ export async function createZipDownload(lines: Line[]): Promise<{ success: boole
     const zip = new JSZip();
 
     readyLines.forEach((line, index) => {
-      const lineNumber = String(index + 1).padStart(3, '0');
-      zip.file(`line_${lineNumber}.mp3`, line.audioBlob!);
+      const lineNumber = String(index + 1).padStart(FILE_NAMING.LINE_NUMBER_PAD, '0');
+      zip.file(`${FILE_NAMING.LINE_PREFIX}_${lineNumber}.${FILE_NAMING.AUDIO_EXTENSION}`, line.audioBlob!);
     });
 
     const zipBlob = await zip.generateAsync({ type: 'blob' });
@@ -142,7 +155,7 @@ export async function createZipDownload(lines: Line[]): Promise<{ success: boole
     const url = URL.createObjectURL(zipBlob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `tts_audio_${new Date().toISOString().split('T')[0]}.zip`;
+    a.download = `${FILE_NAMING.ZIP_PREFIX}_${new Date().toISOString().split('T')[0]}.${FILE_NAMING.ZIP_EXTENSION}`;
     a.click();
     URL.revokeObjectURL(url);
 
@@ -150,7 +163,7 @@ export async function createZipDownload(lines: Line[]): Promise<{ success: boole
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to create ZIP file',
+      error: error instanceof Error ? error.message : ERROR_MESSAGES.ZIP_CREATION_FAILED,
     };
   }
 }

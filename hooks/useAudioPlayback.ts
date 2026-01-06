@@ -23,12 +23,18 @@ export function useAudioPlayback(options: UseAudioPlaybackOptions = {}): UseAudi
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUrlRef = useRef<string | null>(null);
+  const cleanupListenersRef = useRef<(() => void)[]>([]);
 
   // Cleanup function
   const cleanup = useCallback(() => {
+    // Remove all event listeners
+    cleanupListenersRef.current.forEach(fn => fn());
+    cleanupListenersRef.current = [];
+
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.src = '';
+      audioRef.current.removeAttribute('src');
+      audioRef.current.load();
       audioRef.current = null;
     }
     if (audioUrlRef.current) {
@@ -46,11 +52,18 @@ export function useAudioPlayback(options: UseAudioPlaybackOptions = {}): UseAudi
 
   // Play audio from blob
   const play = useCallback(async (audioBlob: Blob) => {
-    // Cleanup any previous playback
+    // Cleanup any previous playback first
     cleanup();
 
-    if (!audioBlob || audioBlob.size === 0) {
-      const error = new Error('No audio blob available for playback');
+    // Validate blob
+    if (!audioBlob) {
+      const error = new Error('No audio blob provided');
+      onError?.(error);
+      throw error;
+    }
+
+    if (audioBlob.size === 0) {
+      const error = new Error('Audio blob is empty');
       onError?.(error);
       throw error;
     }
@@ -60,63 +73,86 @@ export function useAudioPlayback(options: UseAudioPlaybackOptions = {}): UseAudi
       ? audioBlob
       : new Blob([audioBlob], { type: 'audio/mpeg' });
 
-    try {
-      // Create a fresh blob URL
-      const freshAudioUrl = URL.createObjectURL(blobWithType);
-      audioUrlRef.current = freshAudioUrl;
+    // Create blob URL
+    const audioUrl = URL.createObjectURL(blobWithType);
+    audioUrlRef.current = audioUrl;
 
-      // Create new audio element
-      const audio = new Audio();
-      audioRef.current = audio;
+    // Create audio element
+    const audio = new Audio();
+    audioRef.current = audio;
 
-      // Set up event listeners before setting src
-      const handleEnded = () => {
+    // Track if playback has started
+    let hasStarted = false;
+    let hasErrored = false;
+
+    // Set up event listeners
+    const handleEnded = () => {
+      if (!hasErrored) {
         cleanup();
         onPlayEnd?.();
-      };
+      }
+    };
 
-      const handleError = async () => {
-        console.warn('Primary audio playback failed, trying fallback...');
+    const handleError = (e: Event) => {
+      hasErrored = true;
+      console.error('Audio playback error:', e);
 
-        // Try fallback approach - create new audio element with different method
-        try {
-          if (audioUrlRef.current) {
-            URL.revokeObjectURL(audioUrlRef.current);
-          }
+      // Get more detailed error information
+      const audioElement = e.target as HTMLAudioElement;
+      const errorMessage = audioElement.error
+        ? `Audio error: ${audioElement.error.message} (code: ${audioElement.error.code})`
+        : 'Audio playback failed';
 
-          const fallbackUrl = URL.createObjectURL(blobWithType);
-          audioUrlRef.current = fallbackUrl;
+      cleanup();
+      onError?.(new Error(errorMessage));
+    };
 
-          const fallbackAudio = new Audio(fallbackUrl);
-          audioRef.current = fallbackAudio;
+    const handleCanPlay = () => {
+      // Blob URL is ready to play
+    };
 
-          fallbackAudio.addEventListener('ended', handleEnded);
-          fallbackAudio.addEventListener('error', () => {
-            cleanup();
-            onError?.(new Error('Audio playback failed after fallback attempt'));
-          });
+    // Add event listeners and track them for cleanup
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+    audio.addEventListener('canplay', handleCanPlay);
 
-          await fallbackAudio.play();
-        } catch (fallbackError) {
-          cleanup();
-          onError?.(new Error('Audio playback failed'));
-        }
-      };
+    cleanupListenersRef.current.push(
+      () => audio.removeEventListener('ended', handleEnded),
+      () => audio.removeEventListener('error', handleError),
+      () => audio.removeEventListener('canplay', handleCanPlay)
+    );
 
-      audio.addEventListener('ended', handleEnded);
-      audio.addEventListener('error', handleError);
-
-      // Set source and attempt playback
-      audio.src = freshAudioUrl;
+    try {
+      // Set source
+      audio.src = audioUrl;
       audio.load();
+
+      // Wait for the audio to be ready
+      await new Promise<void>((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+          reject(new Error('Audio loading timeout'));
+        }, 5000);
+
+        audio.addEventListener('canplay', () => {
+          clearTimeout(timeoutId);
+          resolve();
+        }, { once: true });
+
+        audio.addEventListener('error', (e) => {
+          clearTimeout(timeoutId);
+          reject(new Error('Failed to load audio'));
+        }, { once: true });
+      });
 
       // Start playback
       setIsPlaying(true);
       onPlayStart?.();
+      hasStarted = true;
 
       await audio.play();
 
     } catch (error) {
+      hasErrored = true;
       cleanup();
       const playbackError = error instanceof Error ? error : new Error('Failed to play audio');
       onError?.(playbackError);

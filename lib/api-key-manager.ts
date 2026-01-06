@@ -1,7 +1,9 @@
 import { ApiKeyManager, ValidationResult, ApiKeyStatus } from '@/types';
+import { validateApiKeyFormat } from '@/lib/validators';
+import { STORAGE_KEYS } from '@/lib/constants';
 
-export const API_KEY_STORAGE_KEY = 'elevenlabs_api_key';
-export const API_KEY_STATUS_KEY = 'elevenlabs_api_key_status';
+export const API_KEY_STORAGE_KEY = STORAGE_KEYS.API_KEY;
+export const API_KEY_STATUS_KEY = STORAGE_KEYS.API_KEY_STATUS;
 
 export const apiKeyManager: ApiKeyManager = {
   /**
@@ -60,17 +62,10 @@ export const apiKeyManager: ApiKeyManager = {
   },
 
   /**
-   * Validate API key format using ElevenLabs pattern
-   * ElevenLabs API keys start with 'sk_' followed by alphanumeric characters
+   * Validate API key format using centralized validator
    */
   validateApiKeyFormat: (apiKey: string): boolean => {
-    if (!apiKey || typeof apiKey !== 'string') {
-      return false;
-    }
-
-    // ElevenLabs API key format: sk_xxxxxxxx (alphanumeric after sk_)
-    const elevenLabsKeyPattern = /^sk_[a-zA-Z0-9]{16,}$/;
-    return elevenLabsKeyPattern.test(apiKey.trim());
+    return validateApiKeyFormat(apiKey).isValid;
   },
 
   /**
@@ -233,5 +228,5 @@ export function initializeApiKeyStatus(): void {
 export const storeApiKey = apiKeyManager.storeApiKey;
 export const getStoredApiKey = apiKeyManager.getStoredApiKey;
 export const clearStoredApiKey = apiKeyManager.clearStoredApiKey;
-export const validateApiKeyFormat = apiKeyManager.validateApiKeyFormat;
+export const validateApiKeyFormatCompat = apiKeyManager.validateApiKeyFormat;
 export const testApiKey = apiKeyManager.testApiKey;

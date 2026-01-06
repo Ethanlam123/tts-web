@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/alert';
 import { Loader2, Eye, EyeOff, Key, Shield, Check, X, ExternalLink } from 'lucide-react';
 import { apiKeyManager, getApiKeyStatus } from '@/lib/api-key-manager';
+import { TIMING } from '@/lib/constants';
 
 interface ApiKeyInputProps {
   onApiKeyChange?: (apiKey: string | null) => void;
@@ -76,7 +77,7 @@ export function ApiKeyInput({
         // Close dialog after successful validation
         setTimeout(() => {
           setIsOpen(false);
-        }, 1500);
+        }, TIMING.DIALOG_CLOSE_DELAY);
       }
     } catch (error) {
       setValidationResult({

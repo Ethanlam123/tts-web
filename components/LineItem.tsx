@@ -3,6 +3,7 @@
 import { Play, Pause, RotateCw, Trash2, Volume2, AlertCircle, Loader2 } from 'lucide-react';
 import { Line } from '@/types';
 import { useAudioPlayback } from '@/hooks/useAudioPlayback';
+import { getStatusConfig, getStatusBorderClasses } from '@/lib/status-helpers';
 
 interface LineItemProps {
   line: Line;
@@ -31,41 +32,8 @@ export default function LineItem({ line, index, onRegenerate, onDelete }: LineIt
     }
   };
 
-  const getStatusConfig = () => {
-    switch (line.status) {
-      case 'ready':
-        return {
-          dotColor: 'bg-emerald-500',
-          textColor: 'text-emerald-600 dark:text-emerald-400',
-          bgColor: 'bg-emerald-50 dark:bg-emerald-500/10',
-          borderColor: 'border-emerald-200 dark:border-emerald-500/20',
-          icon: Volume2,
-          text: 'Ready',
-        };
-      case 'processing':
-        return {
-          dotColor: 'bg-amber-500',
-          textColor: 'text-amber-600 dark:text-amber-400',
-          bgColor: 'bg-amber-50 dark:bg-amber-500/10',
-          borderColor: 'border-amber-200 dark:border-amber-500/20',
-          icon: Loader2,
-          text: 'Generating...',
-        };
-      case 'error':
-        return {
-          dotColor: 'bg-red-500',
-          textColor: 'text-red-600 dark:text-red-400',
-          bgColor: 'bg-red-50 dark:bg-red-500/10',
-          borderColor: 'border-red-200 dark:border-red-500/20',
-          icon: AlertCircle,
-          text: 'Failed to generate',
-        };
-      default:
-        return null;
-    }
-  };
-
-  const statusConfig = getStatusConfig();
+  const statusConfig = getStatusConfig(line.status);
+  const borderClasses = getStatusBorderClasses(line.status);
 
   return (
     <div className={`
@@ -74,12 +42,7 @@ export default function LineItem({ line, index, onRegenerate, onDelete }: LineIt
       border rounded-xl
       transition-all duration-200 ease-out
       hover:shadow-md hover:shadow-black/5
-      ${line.status === 'processing'
-        ? 'border-amber-300 dark:border-amber-500/30 shadow-sm shadow-amber-500/10'
-        : line.status === 'error'
-        ? 'border-red-300 dark:border-red-500/30'
-        : 'border-border/50 hover:border-border'
-      }
+      ${borderClasses}
     `}>
       <div className="flex items-start gap-4 p-4">
         {/* Line number */}

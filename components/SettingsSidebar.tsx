@@ -6,6 +6,12 @@ import { formatVoiceName } from '@/types';
 import { ApiKeyInput } from '@/components/ApiKeyInput';
 import { getApiKeyStatus } from '@/lib/api-key-manager';
 import {
+  getCharacterCountStatus,
+  getCharacterCountColorClasses,
+  getCharacterCountMessage,
+} from '@/lib/status-helpers';
+import { LIMITS } from '@/lib/constants';
+import {
   Shield,
   Key,
   Sparkles,
@@ -54,14 +60,10 @@ export default function SettingsSidebar({
     setApiKeyStatus(getApiKeyStatus());
   }, []);
 
-  // Calculate character count status
-  const getCharacterCountStatus = () => {
-    if (totalCharacters > 10000) return 'error';
-    if (totalCharacters > 8000) return 'warning';
-    return 'normal';
-  };
-
-  const characterStatus = getCharacterCountStatus();
+  // Calculate character count status using centralized helper
+  const characterStatus = getCharacterCountStatus(totalCharacters);
+  const characterColorClasses = getCharacterCountColorClasses(characterStatus);
+  const characterMessage = getCharacterCountMessage(characterStatus);
 
   return (
     <div className="bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl overflow-hidden">
@@ -190,9 +192,9 @@ export default function SettingsSidebar({
           </div>
           <input
             type="range"
-            min="0.5"
-            max="2.0"
-            step="0.1"
+            min={LIMITS.MIN_SPEED}
+            max={LIMITS.MAX_SPEED}
+            step={LIMITS.SPEED_STEP}
             value={speed}
             onChange={(e) => onSpeedChange(parseFloat(e.target.value))}
             className="
@@ -210,9 +212,9 @@ export default function SettingsSidebar({
             "
           />
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>0.5x</span>
+            <span>{LIMITS.MIN_SPEED}x</span>
             <span>1.0x</span>
-            <span>2.0x</span>
+            <span>{LIMITS.MAX_SPEED}x</span>
           </div>
         </div>
 
@@ -281,13 +283,7 @@ export default function SettingsSidebar({
         <div className="pt-4 border-t border-border/50">
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Characters</span>
-            <div className={`flex items-center gap-1.5 ${
-              characterStatus === 'error'
-                ? 'text-red-600 dark:text-red-400'
-                : characterStatus === 'warning'
-                ? 'text-amber-600 dark:text-amber-400'
-                : 'text-foreground'
-            }`}>
+            <div className={`flex items-center gap-1.5 ${characterColorClasses.text}`}>
               {characterStatus === 'error' ? (
                 <AlertTriangle className="w-4 h-4" />
               ) : characterStatus === 'warning' ? (
@@ -300,16 +296,9 @@ export default function SettingsSidebar({
               </span>
             </div>
           </div>
-          {characterStatus !== 'normal' && (
-            <p className={`text-xs mt-1 ${
-              characterStatus === 'error'
-                ? 'text-red-600 dark:text-red-400'
-                : 'text-amber-600 dark:text-amber-400'
-            }`}>
-              {characterStatus === 'error'
-                ? 'Exceeds 10,000 character limit'
-                : 'Approaching character limit'
-              }
+          {characterMessage && (
+            <p className={`text-xs mt-1 ${characterColorClasses.text}`}>
+              {characterMessage}
             </p>
           )}
         </div>
