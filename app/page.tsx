@@ -117,6 +117,11 @@ export default function Dashboard() {
       return;
     }
 
+    // Revoke existing audio URL if regenerating from stale status
+    if (line.status === 'stale' && line.audioUrl) {
+      URL.revokeObjectURL(line.audioUrl);
+    }
+
     // Update line status to processing
     setLines(prev => prev.map(l =>
       l.id === lineId ? { ...l, status: 'processing' as const } : l
@@ -156,6 +161,7 @@ export default function Dashboard() {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
 
+      // Skip already ready lines, but regenerate stale lines
       if (line.status === 'ready' || line.status === 'processing') {
         continue;
       }
@@ -197,6 +203,22 @@ export default function Dashboard() {
     setLines(prev => prev.filter(l => l.id !== lineId));
   }, [lines]);
 
+  // Update line text and mark audio as stale if needed
+  const handleLineUpdate = useCallback((lineId: string, newText: string) => {
+    setLines(prev => prev.map(l => {
+      if (l.id === lineId) {
+        // If line has ready audio, mark it as stale
+        const newStatus = l.status === 'ready' ? 'stale' as const : l.status;
+        return {
+          ...l,
+          text: newText,
+          status: newStatus,
+        };
+      }
+      return l;
+    }));
+  }, []);
+
   // Clean up object URLs on unmount
   useEffect(() => {
     return () => {
@@ -231,6 +253,7 @@ export default function Dashboard() {
                 lines={lines}
                 onRegenerate={generateAudio}
                 onDelete={handleDeleteLine}
+                onLineUpdate={handleLineUpdate}
               />
             )}
           </div>
@@ -248,7 +271,7 @@ export default function Dashboard() {
               onClearAll={clearAll}
               totalCharacters={totalCharacters}
               isGeneratingAll={isGeneratingAll}
-              hasReadyLines={lines.some(line => line.status === 'ready')}
+              hasReadyLines={lines.some(line => line.status === 'ready' || line.status === 'stale')}
               onApiKeyChange={fetchVoices}
             />
           </div>

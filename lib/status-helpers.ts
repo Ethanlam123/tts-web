@@ -25,6 +25,7 @@ export function getStatusConfig(status: LineStatus): StatusStyleConfig | null {
     processing: Loader2,
     error: AlertCircle,
     idle: Volume2,
+    stale: AlertCircle,
   };
 
   const config = STATUS_CONFIG[status];
@@ -45,6 +46,8 @@ export function getStatusBorderClasses(status: LineStatus): string {
       return 'border-amber-300 dark:border-amber-500/30 shadow-sm shadow-amber-500/10';
     case 'error':
       return 'border-red-300 dark:border-red-500/30';
+    case 'stale':
+      return 'border-amber-300 dark:border-amber-500/40';
     case 'ready':
     default:
       return 'border-border/50 hover:border-border';

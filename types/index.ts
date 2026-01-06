@@ -19,7 +19,7 @@ export interface Line {
   text: string;
   audioBlob?: Blob;
   audioUrl?: string;
-  status: 'idle' | 'processing' | 'ready' | 'error';
+  status: 'idle' | 'processing' | 'ready' | 'error' | 'stale';
   error?: string;
 }
 

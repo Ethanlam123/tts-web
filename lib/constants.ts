@@ -68,6 +68,13 @@ export const STATUS_CONFIG = {
     borderColor: 'border-red-200 dark:border-red-500/20',
     text: 'Failed to generate',
   },
+  stale: {
+    dotColor: 'bg-amber-500',
+    textColor: 'text-amber-700 dark:text-amber-400',
+    bgColor: 'bg-amber-50 dark:bg-amber-500/10',
+    borderColor: 'border-amber-200 dark:border-amber-500/30',
+    text: 'Stale - Regenerate',
+  },
 } as const;
 
 // Error Messages

@@ -7,9 +7,10 @@ interface LinesListProps {
   lines: Line[];
   onRegenerate: (lineId: string) => void;
   onDelete: (lineId: string) => void;
+  onLineUpdate: (lineId: string, newText: string) => void;
 }
 
-export default function LinesList({ lines, onRegenerate, onDelete }: LinesListProps) {
+export default function LinesList({ lines, onRegenerate, onDelete, onLineUpdate }: LinesListProps) {
   if (lines.length === 0) {
     return null;
   }
@@ -24,7 +25,7 @@ export default function LinesList({ lines, onRegenerate, onDelete }: LinesListPr
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-green-500" />
-            Ready: {lines.filter(l => l.status === 'ready').length}
+            Ready: {lines.filter(l => l.status === 'ready' || l.status === 'stale').length}
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-amber-500" />
@@ -42,6 +43,7 @@ export default function LinesList({ lines, onRegenerate, onDelete }: LinesListPr
             index={index}
             onRegenerate={onRegenerate}
             onDelete={onDelete}
+            onLineUpdate={onLineUpdate}
             onPlay={() => {
               // Play functionality is handled inside LineItem component
             }}

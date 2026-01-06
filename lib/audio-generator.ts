@@ -106,8 +106,8 @@ export async function generateBatchAudio(
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
-    // Skip lines that are already ready or currently processing
-    if (line.status === 'ready' || line.status === 'processing') {
+    // Skip lines that are already ready, stale, or currently processing
+    if (line.status === 'ready' || line.status === 'stale' || line.status === 'processing') {
       continue;
     }
 
@@ -130,10 +130,10 @@ export async function generateBatchAudio(
 }
 
 /**
- * Create a ZIP file from ready audio lines
+ * Create a ZIP file from ready audio lines (including stale audio)
  */
 export async function createZipDownload(lines: Line[]): Promise<{ success: boolean; error?: string }> {
-  const readyLines = lines.filter(line => line.status === 'ready' && line.audioBlob);
+  const readyLines = lines.filter(line => (line.status === 'ready' || line.status === 'stale') && line.audioBlob);
 
   if (readyLines.length === 0) {
     return {
