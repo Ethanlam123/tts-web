@@ -36,7 +36,7 @@ A modern, production-ready text-to-speech application built with Next.js 16 and 
 
 ### Prerequisites
 - Node.js 18+ (recommended: Node.js 20+)
-- ElevenLabs API key (optional for testing, required for production use)
+- ElevenLabs API key 
 
 ### Installation
 
@@ -280,7 +280,7 @@ Response: Audio buffer (MP3)
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License
 
 ## 🆘 Support
 
@@ -317,4 +317,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Built with ❤️ using Next.js, React, and ElevenLabs API
+Built with ❤️, Claude Code using Next.js, React, and ElevenLabs API
