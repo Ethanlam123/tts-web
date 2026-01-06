@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Key, X, Shield, ExternalLink, Volume2 } from 'lucide-react';
+import { Key, X, Shield, ExternalLink, Volume2, Github } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -121,8 +121,27 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Right side - Key icon with dropdown */}
-          <div className="flex items-center">
+          {/* Right side - GitHub link and Key icon with dropdown */}
+          <div className="flex items-center gap-2">
+            <a
+              href="https://github.com/Ethanlam123/tts-web"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-2 px-3 h-10 rounded-xl bg-muted hover:bg-muted/80 transition-all duration-200 hover:scale-105 active:scale-95"
+              title="View on GitHub"
+            >
+              <Github className="w-5 h-5 text-muted-foreground" />
+              <span className="text-sm font-medium text-foreground">Star on GitHub</span>
+            </a>
+            <a
+              href="https://github.com/Ethanlam123/tts-web"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="sm:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-muted hover:bg-muted/80 transition-all duration-200 hover:scale-105 active:scale-95"
+              title="View on GitHub"
+            >
+              <Github className="w-5 h-5 text-muted-foreground" />
+            </a>
             <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <button
