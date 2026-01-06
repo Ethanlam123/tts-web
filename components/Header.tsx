@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Key, Check, X, Shield, ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Key, X, Shield, ExternalLink, Volume2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,21 +12,19 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { ApiKeyInput } from '@/components/ApiKeyInput';
-import { getApiKeyStatus, isUsingCustomApiKey, getEffectiveApiKey, clearStoredApiKey, setApiKeyStatus } from '@/lib/api-key-manager';
+import { getApiKeyStatus, isUsingCustomApiKey, getEffectiveApiKey, clearStoredApiKey } from '@/lib/api-key-manager';
 
 export default function Header() {
   const [apiKeyStatus, setApiKeyStatus] = useState<'default' | 'custom' | 'none'>('default');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
-    // Update status when component mounts or dropdown closes
     const updateStatus = () => {
       setApiKeyStatus(getApiKeyStatus());
     };
 
     updateStatus();
 
-    // Add event listener for storage changes (if user updates key in another tab)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'elevenlabs_api_key' || e.key === 'elevenlabs_api_key_status') {
         updateStatus();
@@ -46,29 +43,26 @@ export default function Header() {
     setApiKeyStatus(status);
   };
 
-  const getKeyIconColor = () => {
+  const getKeyIconStyle = () => {
     switch (apiKeyStatus) {
       case 'custom':
-        return 'text-green-500';
-      case 'default':
-        return 'text-foreground';
+        return {
+          bg: 'bg-emerald-500/10 hover:bg-emerald-500/20',
+          ring: 'ring-emerald-500/20',
+          icon: 'text-emerald-500',
+        };
       case 'none':
-        return 'text-red-500';
+        return {
+          bg: 'bg-red-500/10 hover:bg-red-500/20',
+          ring: 'ring-red-500/20',
+          icon: 'text-red-500',
+        };
       default:
-        return 'text-foreground';
-    }
-  };
-
-  const getKeyIconBg = () => {
-    switch (apiKeyStatus) {
-      case 'custom':
-        return 'bg-green-500/10 hover:bg-green-500/20';
-      case 'default':
-        return 'bg-secondary hover:bg-secondary/80';
-      case 'none':
-        return 'bg-red-500/10 hover:bg-red-500/20';
-      default:
-        return 'bg-secondary hover:bg-secondary/80';
+        return {
+          bg: 'bg-muted hover:bg-muted/80',
+          ring: 'ring-border',
+          icon: 'text-muted-foreground',
+        };
     }
   };
 
@@ -77,9 +71,9 @@ export default function Header() {
       case 'custom':
         return 'Using Your Key';
       case 'default':
-        return 'Using Default Key';
+        return 'Default Key';
       case 'none':
-        return 'No Key Configured';
+        return 'No Key';
       default:
         return 'API Key Status';
     }
@@ -102,7 +96,6 @@ export default function Header() {
     const effectiveKey = getEffectiveApiKey();
     if (!effectiveKey) return null;
 
-    // If using custom key, show masked version
     if (isUsingCustomApiKey() && effectiveKey.length > 10) {
       return `${effectiveKey.slice(0, 8)}...${effectiveKey.slice(-4)}`;
     }
@@ -110,53 +103,71 @@ export default function Header() {
     return null;
   };
 
+  const iconStyle = getKeyIconStyle();
+
   return (
-    <header className="w-full border-b border-border/50 bg-card/50 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side - Logo */}
-          <div className="flex items-center">
-            <h1 className="text-xl font-bold text-foreground">
-              AudioConverter
-            </h1>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary/10">
+              <Volume2 className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold text-foreground tracking-tight">
+                AudioConverter
+              </h1>
+            </div>
           </div>
 
           {/* Right side - Key icon with dropdown */}
           <div className="flex items-center">
             <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
               <DropdownMenuTrigger asChild>
-                <button className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${getKeyIconBg()}`}>
-                  <Key className={`w-5 h-5 ${getKeyIconColor()}`} />
+                <button
+                  className={`
+                    flex items-center justify-center
+                    w-10 h-10 rounded-xl
+                    ring-1 ${iconStyle.ring}
+                    ${iconStyle.bg}
+                    transition-all duration-200
+                    hover:scale-105 active:scale-95
+                  `}
+                >
+                  <Key className={`w-5 h-5 ${iconStyle.icon}`} />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80">
+              <DropdownMenuContent align="end" className="w-80 rounded-xl shadow-xl">
                 <div className="p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Shield className="h-4 w-4" />
-                    <span className="font-medium">API Key Status</span>
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+                      <Shield className="h-4 w-4 text-primary" />
+                    </div>
+                    <span className="font-semibold">API Key Status</span>
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {/* Status Badge */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Current Status:</span>
-                      <Badge variant={getStatusBadgeVariant()}>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                      <span className="text-sm text-muted-foreground">Current Status</span>
+                      <Badge variant={getStatusBadgeVariant()} className="font-medium">
                         {getStatusText()}
                       </Badge>
                     </div>
 
                     {/* Stored Key Info (for custom keys) */}
                     {apiKeyStatus === 'custom' && formatStoredKey() && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Key:</span>
-                        <span className="text-xs font-mono bg-muted px-2 py-1 rounded">
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                        <span className="text-sm text-muted-foreground">Key</span>
+                        <span className="text-xs font-mono bg-background px-2 py-1 rounded-md border border-border">
                           {formatStoredKey()}
                         </span>
                       </div>
                     )}
 
                     {/* Description */}
-                    <DropdownMenuLabel className="text-xs text-muted-foreground">
+                    <DropdownMenuLabel className="text-xs text-muted-foreground font-normal leading-relaxed px-0">
                       {apiKeyStatus === 'custom'
                         ? 'You are using your personal ElevenLabs API key for higher usage limits.'
                         : apiKeyStatus === 'default'
@@ -171,40 +182,26 @@ export default function Header() {
 
                 {/* Actions */}
                 <div className="p-2 space-y-1">
-                  {apiKeyStatus === 'custom' ? (
-                    <ApiKeyInput
-                      onApiKeyChange={handleApiKeyChange}
-                      onStatusChange={handleStatusChange}
-                      trigger={
-                        <DropdownMenuItem
-                          className="w-full justify-start cursor-pointer"
-                          onSelect={(e) => e.preventDefault()}
-                        >
-                          Update API Key
-                        </DropdownMenuItem>
-                      }
-                    />
-                  ) : (
-                    <ApiKeyInput
-                      onApiKeyChange={handleApiKeyChange}
-                      onStatusChange={handleStatusChange}
-                      trigger={
-                        <DropdownMenuItem
-                          className="w-full justify-start cursor-pointer"
-                          onSelect={(e) => e.preventDefault()}
-                        >
-                          Configure API Key
-                        </DropdownMenuItem>
-                      }
-                    />
-                  )}
+                  <ApiKeyInput
+                    onApiKeyChange={handleApiKeyChange}
+                    onStatusChange={handleStatusChange}
+                    trigger={
+                      <DropdownMenuItem
+                        className="w-full justify-start cursor-pointer rounded-lg"
+                        onSelect={(e) => e.preventDefault()}
+                      >
+                        <Key className="mr-2 h-4 w-4" />
+                        {apiKeyStatus === 'custom' ? 'Update API Key' : 'Configure API Key'}
+                      </DropdownMenuItem>
+                    }
+                  />
 
                   <DropdownMenuItem asChild>
                     <a
                       href="https://elevenlabs.io/app/api-keys"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full justify-start cursor-pointer"
+                      className="w-full justify-start cursor-pointer rounded-lg"
                     >
                       <ExternalLink className="mr-2 h-4 w-4" />
                       Get API Key from ElevenLabs
@@ -213,7 +210,7 @@ export default function Header() {
 
                   {apiKeyStatus === 'custom' && (
                     <DropdownMenuItem
-                      className="w-full justify-start cursor-pointer text-red-600 focus:text-red-600"
+                      className="w-full justify-start cursor-pointer rounded-lg text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-500/10"
                       onClick={() => {
                         clearStoredApiKey();
                         setApiKeyStatus('default');

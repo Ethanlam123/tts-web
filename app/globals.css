@@ -44,74 +44,108 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --radius: 0.75rem;
+
+  /* Light Theme - Modern SaaS Design */
+  --background: oklch(0.985 0 0);           /* Near white */
+  --foreground: oklch(0.145 0.014 285);     /* Dark slate for text */
+  --card: oklch(1 0 0);                     /* Pure white */
+  --card-foreground: oklch(0.145 0.014 285);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.145 0.014 285);
+
+  /* Primary - Trust Blue */
+  --primary: oklch(0.546 0.245 262.88);     /* Blue 600 #2563EB */
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+
+  /* Secondary - Subtle gray */
+  --secondary: oklch(0.968 0.003 264.54);   /* Slate 100 */
+  --secondary-foreground: oklch(0.279 0.024 264.18);
+
+  /* Muted */
+  --muted: oklch(0.968 0.003 264.54);
+  --muted-foreground: oklch(0.446 0.03 256.8);
+
+  /* Accent */
+  --accent: oklch(0.968 0.003 264.54);
+  --accent-foreground: oklch(0.279 0.024 264.18);
+
+  /* Destructive */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+
+  /* Borders and inputs */
+  --border: oklch(0.928 0.006 264.53);
+  --input: oklch(0.928 0.006 264.53);
+  --ring: oklch(0.546 0.245 262.88);
+
+  /* Charts */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
+
+  /* Sidebar */
   --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.145 0.014 285);
+  --sidebar-primary: oklch(0.546 0.245 262.88);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-accent: oklch(0.968 0.003 264.54);
+  --sidebar-accent-foreground: oklch(0.279 0.024 264.18);
+  --sidebar-border: oklch(0.928 0.006 264.53);
+  --sidebar-ring: oklch(0.546 0.245 262.88);
 }
 
 .dark {
-  /* TTS Web App Dark Theme - Matching screen.png */
-  --background: oklch(0.145 0 0);          /* slate-900: #0f172a */
-  --foreground: oklch(0.985 0 0);          /* slate-50: #f8fafc */
-  --card: oklch(0.205 0 0);                /* slate-800: #1e293b */
-  --card-foreground: oklch(0.985 0 0);      /* slate-50: #f8fafc */
-  --popover: oklch(0.205 0 0);             /* slate-800: #1e293b */
-  --popover-foreground: oklch(0.985 0 0);   /* slate-50: #f8fafc */
-  --primary: oklch(0.734 0.169 187.48);     /* cyan-500: #06b6d4 */
-  --primary-foreground: oklch(0.145 0 0);    /* slate-900: #0f172a */
-  --secondary: oklch(0.269 0 0);           /* slate-800: #1e293b */
-  --secondary-foreground: oklch(0.985 0 0); /* slate-50: #f8fafc */
-  --muted: oklch(0.269 0 0);               /* slate-800: #1e293b */
-  --muted-foreground: oklch(0.708 0 0);      /* slate-400: #94a3b8 */
-  --accent: oklch(0.269 0 0);               /* slate-800: #1e293b */
-  --accent-foreground: oklch(0.985 0 0);     /* slate-50: #f8fafc */
-  --destructive: oklch(0.639 0.182 25.33);  /* red-600: #dc2626 */
-  --destructive-foreground: oklch(0.985 0 0); /* slate-50: #f8fafc */
-  --border: oklch(1 0 0 / 10%);            /* slate-700: #334155 */
-  --input: oklch(1 0 0 / 15%);             /* slate-700: #334155 */
-  --ring: oklch(0.734 0.169 187.48);         /* cyan-500: #06b6d4 */
+  /* Dark Theme - Modern SaaS Design */
+  --background: oklch(0.129 0.014 285.75);    /* Slate 950 */
+  --foreground: oklch(0.968 0.003 264.54);    /* Slate 100 */
+  --card: oklch(0.162 0.016 285.88);          /* Slate 900 */
+  --card-foreground: oklch(0.968 0.003 264.54);
+  --popover: oklch(0.162 0.016 285.88);
+  --popover-foreground: oklch(0.968 0.003 264.54);
+
+  /* Primary - Blue */
+  --primary: oklch(0.623 0.214 259.13);       /* Blue 500 #3B82F6 */
+  --primary-foreground: oklch(0.129 0.014 285.75);
+
+  /* Secondary */
+  --secondary: oklch(0.216 0.019 285.94);     /* Slate 800 */
+  --secondary-foreground: oklch(0.968 0.003 264.54);
+
+  /* Muted */
+  --muted: oklch(0.216 0.019 285.94);
+  --muted-foreground: oklch(0.704 0.015 265.87);
+
+  /* Accent */
+  --accent: oklch(0.216 0.019 285.94);
+  --accent-foreground: oklch(0.968 0.003 264.54);
+
+  /* Destructive */
+  --destructive: oklch(0.639 0.182 25.33);
+  --destructive-foreground: oklch(0.968 0.003 264.54);
+
+  /* Borders and inputs */
+  --border: oklch(0.279 0.024 264.18 / 40%);
+  --input: oklch(0.279 0.024 264.18 / 50%);
+  --ring: oklch(0.623 0.214 259.13);
+
+  /* Charts */
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);             /* slate-800: #1e293b */
-  --sidebar-foreground: oklch(0.985 0 0);   /* slate-50: #f8fafc */
-  --sidebar-primary: oklch(0.734 0.169 187.48); /* cyan-500: #06b6d4 */
-  --sidebar-primary-foreground: oklch(0.145 0 0); /* slate-900: #0f172a */
-  --sidebar-accent: oklch(0.269 0 0);       /* slate-800: #1e293b */
-  --sidebar-accent-foreground: oklch(0.985 0 0); /* slate-50: #f8fafc */
-  --sidebar-border: oklch(1 0 0 / 10%);      /* slate-700: #334155 */
-  --sidebar-ring: oklch(0.734 0.169 187.48);   /* cyan-500: #06b6d4 */
+
+  /* Sidebar */
+  --sidebar: oklch(0.162 0.016 285.88);
+  --sidebar-foreground: oklch(0.968 0.003 264.54);
+  --sidebar-primary: oklch(0.623 0.214 259.13);
+  --sidebar-primary-foreground: oklch(0.129 0.014 285.75);
+  --sidebar-accent: oklch(0.216 0.019 285.94);
+  --sidebar-accent-foreground: oklch(0.968 0.003 264.54);
+  --sidebar-border: oklch(0.279 0.024 264.18 / 40%);
+  --sidebar-ring: oklch(0.623 0.214 259.13);
 }
 
 @layer base {
@@ -119,21 +153,83 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
 }
 
-/* Custom utility classes for TTS app status colors */
+/* Custom utility classes */
 @layer utilities {
-  .status-ready { color: oklch(0.547 0.169 142.1); }     /* green-600: #16a34a */
-  .status-processing { color: oklch(0.678 0.155 41.03); }   /* amber-500: #f59e0b */
-  .status-error { color: oklch(0.639 0.182 25.33); }         /* red-600: #dc2626 */
+  /* Status colors */
+  .status-ready { color: oklch(0.547 0.169 142.1); }
+  .status-processing { color: oklch(0.678 0.155 41.03); }
+  .status-error { color: oklch(0.639 0.182 25.33); }
 
   .bg-status-ready { background-color: oklch(0.547 0.169 142.1); }
   .bg-status-processing { background-color: oklch(0.678 0.155 41.03); }
   .bg-status-error { background-color: oklch(0.639 0.182 25.33); }
 
-  /* Custom colors matching screen.png */
-  .text-cyan-primary { color: oklch(0.734 0.169 187.48); }    /* cyan-500: #06b6d4 */
-  .bg-cyan-primary { background-color: oklch(0.734 0.169 187.48); }
+  /* Glassmorphism utilities */
+  .glass {
+    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl;
+  }
+
+  .glass-card {
+    @apply bg-white/60 dark:bg-slate-800/60 backdrop-blur-lg border border-white/20 dark:border-slate-700/50;
+  }
+
+  /* Focus ring utility */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* Smooth transitions */
+  .transition-smooth {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  /* Hide scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.704 0.015 265.87 / 30%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.704 0.015 265.87 / 50%);
+}
+
+/* Selection styling */
+::selection {
+  background: oklch(0.623 0.214 259.13 / 20%);
+  color: inherit;
 }

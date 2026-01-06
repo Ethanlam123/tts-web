@@ -1,11 +1,23 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Voice } from "@/types";
-import { formatVoiceName } from "@/types";
-import { ApiKeyInput } from "@/components/ApiKeyInput";
-import { getApiKeyStatus } from "@/lib/api-key-manager";
-import { Shield, Key } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Voice } from '@/types';
+import { formatVoiceName } from '@/types';
+import { ApiKeyInput } from '@/components/ApiKeyInput';
+import { getApiKeyStatus } from '@/lib/api-key-manager';
+import {
+  Shield,
+  Key,
+  Sparkles,
+  Download,
+  Trash2,
+  Settings,
+  Mic,
+  Gauge,
+  AlertTriangle,
+  CheckCircle2,
+  Loader2,
+} from 'lucide-react';
 
 interface SettingsSidebarProps {
   voices: Voice[];
@@ -44,79 +56,103 @@ export default function SettingsSidebar({
 
   // Calculate character count status
   const getCharacterCountStatus = () => {
-    if (totalCharacters > 8000) return "warning";
-    if (totalCharacters > 10000) return "error";
-    return "normal";
+    if (totalCharacters > 10000) return 'error';
+    if (totalCharacters > 8000) return 'warning';
+    return 'normal';
   };
 
   const characterStatus = getCharacterCountStatus();
 
   return (
-    <div className="bg-card/50 border border-border/50 rounded-lg p-6">
-      <h2 className="text-xl font-semibold text-foreground mb-6">
-        Settings & Controls
-      </h2>
-
-      {/* API Key Section */}
-      <div className="space-y-4 mb-6 p-4 bg-slate-100 dark:bg-slate-800/30 rounded-lg border border-slate-200 dark:border-slate-700/50">
-        <div className="flex items-center gap-2 mb-3">
-          <Shield className="h-4 w-4" />
-          <span className="text-sm font-medium">API Configuration</span>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <Key className="h-3 w-3" />
-              <span className="text-sm">
-                {apiKeyStatus === 'custom'
-                  ? 'Using your API key'
-                  : apiKeyStatus === 'default'
-                  ? 'Using default API key'
-                  : 'No API key configured'
-                }
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {apiKeyStatus === 'custom'
-                ? 'Higher usage limits with your personal key.'
-                : 'Configure your own API key for higher limits.'
-              }
-            </p>
-          </div>
-          <ApiKeyInput
-            onApiKeyChange={() => {
-              setApiKeyStatus(getApiKeyStatus());
-              onApiKeyChange?.();
-            }}
-            onStatusChange={setApiKeyStatus}
-            trigger={
-              <button className="ml-3 text-xs bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-1 rounded transition-colors">
-                {apiKeyStatus === 'custom' ? 'Update' : 'Configure'}
-              </button>
-            }
-          />
+    <div className="bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl overflow-hidden">
+      {/* Header */}
+      <div className="px-6 py-4 border-b border-border/50 bg-muted/30">
+        <div className="flex items-center gap-2">
+          <Settings className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground">Settings</h2>
         </div>
       </div>
 
-      {/* Voice Selection */}
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            Default Voice
-          </label>
+      <div className="p-6 space-y-6">
+        {/* API Key Section */}
+        <div className="p-4 rounded-xl bg-muted/50 border border-border/50 space-y-3">
+          <div className="flex items-center gap-2">
+            <Shield className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium">API Configuration</span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <Key className="h-3 w-3 text-muted-foreground" />
+                <span className={`text-sm ${
+                  apiKeyStatus === 'custom'
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : apiKeyStatus === 'none'
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-foreground'
+                }`}>
+                  {apiKeyStatus === 'custom'
+                    ? 'Using your API key'
+                    : apiKeyStatus === 'default'
+                    ? 'Using default API key'
+                    : 'No API key configured'
+                  }
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {apiKeyStatus === 'custom'
+                  ? 'Higher usage limits with your personal key.'
+                  : 'Configure your own API key for higher limits.'
+                }
+              </p>
+            </div>
+            <ApiKeyInput
+              onApiKeyChange={() => {
+                setApiKeyStatus(getApiKeyStatus());
+                onApiKeyChange?.();
+              }}
+              onStatusChange={setApiKeyStatus}
+              trigger={
+                <button className="
+                  ml-3 text-xs font-medium
+                  bg-primary hover:bg-primary/90
+                  text-primary-foreground
+                  px-4 py-2 rounded-lg
+                  transition-all duration-200
+                  shadow-sm hover:shadow-md hover:shadow-primary/20
+                ">
+                  {apiKeyStatus === 'custom' ? 'Update' : 'Configure'}
+                </button>
+              }
+            />
+          </div>
+        </div>
+
+        {/* Voice Selection */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Mic className="w-4 h-4 text-muted-foreground" />
+            <label className="text-sm font-medium text-foreground">
+              Voice
+            </label>
+          </div>
           {voices.length > 0 ? (
             <select
               value={selectedVoiceId}
               onChange={(e) => onVoiceChange(e.target.value)}
-              className="w-full bg-background border border-input rounded-md px-3 py-2 text-foreground"
+              className="
+                w-full px-4 py-2.5 rounded-xl
+                bg-background border border-input
+                text-foreground text-sm
+                focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary
+                transition-all duration-200
+                cursor-pointer
+              "
             >
               <option value="">Select a voice...</option>
               {voices.map((voice, index) => (
-                <option
-                  key={`${voice.voice_id}-${index}`}
-                  value={voice.voice_id}
-                >
+                <option key={`${voice.voice_id}-${index}`} value={voice.voice_id}>
                   {formatVoiceName(voice)}
                 </option>
               ))}
@@ -124,24 +160,34 @@ export default function SettingsSidebar({
           ) : (
             <select
               disabled
-              className="w-full bg-muted border border-input rounded-md px-3 py-2 text-muted-foreground"
+              className="
+                w-full px-4 py-2.5 rounded-xl
+                bg-muted border border-input
+                text-muted-foreground text-sm
+                cursor-not-allowed
+              "
             >
-              <option key="no-voices">
-                No voices available - check API key
-              </option>
+              <option>No voices available - check API key</option>
             </select>
           )}
           <p className="text-xs text-muted-foreground">
-            This voice will be used for all lines by default. You can override
-            it for individual lines on the left.
+            Selected voice will be used for all lines.
           </p>
         </div>
 
         {/* Speed Control */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            Playback Speed: {speed.toFixed(1)}x
-          </label>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Gauge className="w-4 h-4 text-muted-foreground" />
+              <label className="text-sm font-medium text-foreground">
+                Speed
+              </label>
+            </div>
+            <span className="text-sm font-mono font-medium text-primary">
+              {speed.toFixed(1)}x
+            </span>
+          </div>
           <input
             type="range"
             min="0.5"
@@ -149,56 +195,123 @@ export default function SettingsSidebar({
             step="0.1"
             value={speed}
             onChange={(e) => onSpeedChange(parseFloat(e.target.value))}
-            className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-cyan-primary"
+            className="
+              w-full h-2 rounded-full appearance-none cursor-pointer
+              bg-muted
+              [&::-webkit-slider-thumb]:appearance-none
+              [&::-webkit-slider-thumb]:w-4
+              [&::-webkit-slider-thumb]:h-4
+              [&::-webkit-slider-thumb]:rounded-full
+              [&::-webkit-slider-thumb]:bg-primary
+              [&::-webkit-slider-thumb]:shadow-md
+              [&::-webkit-slider-thumb]:cursor-pointer
+              [&::-webkit-slider-thumb]:transition-transform
+              [&::-webkit-slider-thumb]:hover:scale-110
+            "
           />
-          <div className="flex justify-between text-xs text-muted-foreground mt-1">
+          <div className="flex justify-between text-xs text-muted-foreground">
             <span>0.5x</span>
+            <span>1.0x</span>
             <span>2.0x</span>
           </div>
         </div>
-      </div>
 
-      {/* Action Buttons */}
-      <div className="space-y-3 mt-6">
-        <button
-          onClick={onGenerateAll}
-          className="w-full bg-cyan-primary text-primary-foreground hover:bg-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-3 rounded-md font-medium transition-colors flex items-center justify-center gap-2"
-          disabled={isGeneratingAll}
-        >
-          ✨ Generate All
-        </button>
-
-        <button
-          onClick={onDownloadAll}
-          className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-3 rounded-md font-medium transition-colors flex items-center justify-center gap-2"
-          disabled={!hasReadyLines}
-        >
-          ⬇️ Download All
-        </button>
-
-        <button
-          onClick={onClearAll}
-          className="w-full text-destructive hover:bg-destructive/10 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-3 rounded-md font-medium transition-colors flex items-center justify-center gap-2"
-        >
-          🗑️ Clear All
-        </button>
-      </div>
-
-      {/* Character Counter */}
-      <div className="mt-6">
-        <div className="flex justify-between text-sm">
-          <span className="text-foreground">Character Count</span>
-          <span
-            className={
-              characterStatus === "warning"
-                ? "text-amber-500"
-                : characterStatus === "error"
-                ? "text-red-500"
-                : "text-foreground"
-            }
+        {/* Action Buttons */}
+        <div className="space-y-3 pt-2">
+          <button
+            onClick={onGenerateAll}
+            disabled={isGeneratingAll || !selectedVoiceId}
+            className="
+              w-full flex items-center justify-center gap-2
+              bg-primary text-primary-foreground
+              hover:bg-primary/90
+              disabled:opacity-50 disabled:cursor-not-allowed
+              px-4 py-3 rounded-xl font-medium
+              transition-all duration-200
+              shadow-lg shadow-primary/25
+              hover:shadow-xl hover:shadow-primary/30
+              disabled:shadow-none
+            "
           >
-            {totalCharacters.toLocaleString()}
-          </span>
+            {isGeneratingAll ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-5 h-5" />
+                Generate All
+              </>
+            )}
+          </button>
+
+          <button
+            onClick={onDownloadAll}
+            disabled={!hasReadyLines}
+            className="
+              w-full flex items-center justify-center gap-2
+              bg-secondary text-secondary-foreground
+              hover:bg-secondary/80
+              disabled:opacity-50 disabled:cursor-not-allowed
+              px-4 py-3 rounded-xl font-medium
+              transition-all duration-200
+            "
+          >
+            <Download className="w-5 h-5" />
+            Download All
+          </button>
+
+          <button
+            onClick={onClearAll}
+            className="
+              w-full flex items-center justify-center gap-2
+              text-destructive
+              hover:bg-destructive/10
+              px-4 py-3 rounded-xl font-medium
+              transition-all duration-200
+            "
+          >
+            <Trash2 className="w-5 h-5" />
+            Clear All
+          </button>
+        </div>
+
+        {/* Character Counter */}
+        <div className="pt-4 border-t border-border/50">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">Characters</span>
+            <div className={`flex items-center gap-1.5 ${
+              characterStatus === 'error'
+                ? 'text-red-600 dark:text-red-400'
+                : characterStatus === 'warning'
+                ? 'text-amber-600 dark:text-amber-400'
+                : 'text-foreground'
+            }`}>
+              {characterStatus === 'error' ? (
+                <AlertTriangle className="w-4 h-4" />
+              ) : characterStatus === 'warning' ? (
+                <AlertTriangle className="w-4 h-4" />
+              ) : totalCharacters > 0 ? (
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              ) : null}
+              <span className="text-sm font-mono font-medium">
+                {totalCharacters.toLocaleString()}
+              </span>
+            </div>
+          </div>
+          {characterStatus !== 'normal' && (
+            <p className={`text-xs mt-1 ${
+              characterStatus === 'error'
+                ? 'text-red-600 dark:text-red-400'
+                : 'text-amber-600 dark:text-amber-400'
+            }`}>
+              {characterStatus === 'error'
+                ? 'Exceeds 10,000 character limit'
+                : 'Approaching character limit'
+              }
+            </p>
+          )}
         </div>
       </div>
     </div>
