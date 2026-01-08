@@ -198,22 +198,33 @@ export default function SettingsSidebar({
             value={speed}
             onChange={(e) => onSpeedChange(parseFloat(e.target.value))}
             className="
-              w-full h-2 rounded-full appearance-none cursor-pointer
-              bg-muted
+              w-full h-2 rounded-lg appearance-none cursor-pointer
+              bg-primary
+              accent-primary
               [&::-webkit-slider-thumb]:appearance-none
-              [&::-webkit-slider-thumb]:w-4
-              [&::-webkit-slider-thumb]:h-4
+              [&::-webkit-slider-thumb]:w-5
+              [&::-webkit-slider-thumb]:h-5
               [&::-webkit-slider-thumb]:rounded-full
-              [&::-webkit-slider-thumb]:bg-primary
-              [&::-webkit-slider-thumb]:shadow-md
+              [&::-webkit-slider-thumb]:bg-white
+              [&::-webkit-slider-thumb]:border-2
+              [&::-webkit-slider-thumb]:border-primary
+              [&::-webkit-slider-thumb]:shadow-sm
               [&::-webkit-slider-thumb]:cursor-pointer
               [&::-webkit-slider-thumb]:transition-transform
               [&::-webkit-slider-thumb]:hover:scale-110
+              [&::-moz-range-thumb]:appearance-none
+              [&::-moz-range-thumb]:w-5
+              [&::-moz-range-thumb]:h-5
+              [&::-moz-range-thumb]:rounded-full
+              [&::-moz-range-thumb]:bg-white
+              [&::-moz-range-thumb]:border-2
+              [&::-moz-range-thumb]:border-primary
+              [&::-moz-range-thumb]:shadow-sm
+              [&::-moz-range-thumb]:cursor-pointer
             "
           />
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>{LIMITS.MIN_SPEED}x</span>
-            <span>1.0x</span>
             <span>{LIMITS.MAX_SPEED}x</span>
           </div>
         </div>
